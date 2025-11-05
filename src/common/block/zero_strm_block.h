@@ -37,7 +37,14 @@ typedef struct mem_blk_fifo_t {
     } FIFO;
 } mem_blk_fifo_t;
 
-extern 
+
+
+#define BLOCK_FIFO_INIT(__PTOBJ)              zero_strm_block_fifo_init(__PTOBJ)
+#define BLOCK_FREE(__PTOBJ,__PTFREEBLOCK)     zero_strm_block_free(__PTOBJ,__PTFREEBLOCK)
+#define BLOCK_NEW(__PTOBJ)                    zero_strm_block_new(__PTOBJ)
+#define BLOCK_APPEND(__PTOBJ,__PTNEWNODE)     zero_strm_block_append(__PTOBJ,__PTNEWNODE)
+#define BLOCK_FETCH(__PTOBJ)                  zero_strm_block_fetch(__PTOBJ)
+
     void zero_strm_block_fifo_init(mem_blk_fifo_t *ptThis) ;
 extern 
     void zero_strm_block_free(mem_blk_fifo_t *ptThis,mem_blk_t *ptFreeBlock);

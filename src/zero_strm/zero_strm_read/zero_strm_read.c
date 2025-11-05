@@ -49,7 +49,7 @@ void zero_strm_read_init(zero_strm_read_t *ptThis,zero_strm_read_cfg_t *ptCfg )
         ptAddr[chIndex].tList.tSizeInByte = READ_BUFF_CNT;
         zero_strm_block_free(&(this.tMemBlockFifo),&ptAddr[chIndex].tList);
     }
-    //this.fnRead = stream_read;
+    
     this.hwDmaSizeTotal = READ_BUFF_CNT;
     this.fnDmaCntGet = ptCfg->fnDmaCntGet ;
     this.bBusy = false;

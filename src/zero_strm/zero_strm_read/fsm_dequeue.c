@@ -54,8 +54,6 @@ def_simple_fsm(time_out,
 /*============================ PROTOTYPES ====================================*/
 static void tim_irq_trigger_delay_us(uint32_t wDelayTime) ;
 
-//static void get_dma_cnt_and_dma_rx_init(stream_read_t *ptThis,mem_blk_t *ptByteFifo,
-//    mem_blk_t **pptByteFifo);
 static void get_dma_cnt(zero_strm_read_t *ptThis,uint16_t *hwSize);
 
 static bool is_equal_to_count_before_time_out(zero_strm_read_t *ptThis);
@@ -65,8 +63,6 @@ static void set_dma_busy(zero_strm_read_t *ptThis);
 
 
 static bool is_uart_idle(zero_strm_read_t *ptThis);
-//void set_uart_busy(stream_read_t *ptThis);
-//void set_uart_idle(stream_read_t *ptThis);
 
 static bool is_really_time_out(zero_strm_read_t *ptThis);
 static uint16_t get_dma_data_cnt(zero_strm_read_t *ptThis);
