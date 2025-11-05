@@ -4,7 +4,7 @@
 
 def_simple_fsm(stream_write_flush,
     def_params(
-        stream_write_t *ptStreamWrite;
+        zero_strm_write_t *ptStreamWrite;
         mem_blk_t **pptByteFifo;
         void (*fnDmaStart)(mem_blk_t *ptFifoSend); 
         stream_write_flush_fn  *fnFlush ;
@@ -15,13 +15,13 @@ def_simple_fsm(stream_write_flush,
 def_simple_fsm(enqueue,
     def_params(          
         fsm(stream_write_flush) fsmFlush;
-        stream_write_t *ptStreamWrite;
+        zero_strm_write_t *ptStreamWrite;
         enqueue_fn *fnEnqueue;
     )
 )
 
 fsm_initialiser(enqueue,
-    args(stream_write_t *ptStreamWrite
+    args(zero_strm_write_t *ptStreamWrite
     ))
 
     init_body (
@@ -34,7 +34,7 @@ fsm_initialiser(enqueue,
     )
 
 fsm_initialiser(stream_write_flush,
-    args(stream_write_t *ptStreamWrite,mem_blk_t **pptByteFifo,dma_start_fn *fnDmaStart
+    args(zero_strm_write_t *ptStreamWrite,mem_blk_t **pptByteFifo,dma_start_fn *fnDmaStart
     ))
     
     init_body (  

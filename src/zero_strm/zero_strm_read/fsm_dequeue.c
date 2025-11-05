@@ -9,7 +9,7 @@
 /*============================ TYPES =========================================*/
 def_simple_fsm(stream_read_flush,
     def_params(           
-        stream_read_t  *ptStreamRead;
+        zero_strm_read_t  *ptStreamRead;
         mem_blk_t **pptByteFifo;
         mem_blk_t *ptByteFifo;
         dma_start_rx_fn *fnDmaStartRx;
@@ -19,7 +19,7 @@ def_simple_fsm(stream_read_flush,
 
 def_simple_fsm(dequeue,
     def_params(
-        stream_read_t *ptStreamRead;
+        zero_strm_read_t *ptStreamRead;
         mem_blk_t *ptByteFifo;
         dequeue_fn *fnDequeue;
     )
@@ -27,7 +27,7 @@ def_simple_fsm(dequeue,
 
 def_simple_fsm(time_out,
     def_params(
-        stream_read_t *ptStreamRead;
+        zero_strm_read_t *ptStreamRead;
         time_out_fn *fnTimeOut;
         fsm(stream_read_flush) fsmFlush;
     )
@@ -41,23 +41,23 @@ static void tim_irq_trigger_delay_us(uint32_t wDelayTime) ;
 
 //static void get_dma_cnt_and_dma_rx_init(stream_read_t *ptThis,mem_blk_t *ptByteFifo,
 //    mem_blk_t **pptByteFifo);
-static void get_dma_cnt(stream_read_t *ptThis,uint16_t *hwSize);
+static void get_dma_cnt(zero_strm_read_t *ptThis,uint16_t *hwSize);
 
-static bool is_equal_to_count_before_time_out(stream_read_t *ptThis);
+static bool is_equal_to_count_before_time_out(zero_strm_read_t *ptThis);
 
-static bool is_dma_busy(stream_read_t *ptThis);
-static void set_dma_busy(stream_read_t *ptThis);
+static bool is_dma_busy(zero_strm_read_t *ptThis);
+static void set_dma_busy(zero_strm_read_t *ptThis);
 
 
-static bool is_uart_idle(stream_read_t *ptThis);
+static bool is_uart_idle(zero_strm_read_t *ptThis);
 //void set_uart_busy(stream_read_t *ptThis);
 //void set_uart_idle(stream_read_t *ptThis);
 
-static bool is_really_time_out(stream_read_t *ptThis);
-static uint16_t get_dma_data_cnt(stream_read_t *ptThis);
-static void update_data_cnt(stream_read_t *ptThis,uint16_t hwDataCnt);
+static bool is_really_time_out(zero_strm_read_t *ptThis);
+static uint16_t get_dma_data_cnt(zero_strm_read_t *ptThis);
+static void update_data_cnt(zero_strm_read_t *ptThis,uint16_t hwDataCnt);
 
-static bool is_timer_time_out(stream_read_t *ptThis);
+static bool is_timer_time_out(zero_strm_read_t *ptThis);
 /*============================ LOCAL VARIABLES ===============================*/
 /*============================ IMPLEMENTATION ================================*/
 
@@ -65,7 +65,7 @@ static bool is_timer_time_out(stream_read_t *ptThis);
 
 
 fsm_initialiser(dequeue,
-    args(stream_read_t *ptStreamRead
+    args(zero_strm_read_t *ptStreamRead
     ))
 
     init_body(
@@ -78,7 +78,7 @@ fsm_initialiser(dequeue,
     )
 
 fsm_initialiser(stream_read_flush,
-    args(stream_read_t *ptStreamRead ,mem_blk_t **pptByteFifo,dma_start_rx_fn *fnDmaStartRx
+    args(zero_strm_read_t *ptStreamRead ,mem_blk_t **pptByteFifo,dma_start_rx_fn *fnDmaStartRx
     ))
 
     init_body(  
@@ -95,7 +95,7 @@ fsm_initialiser(stream_read_flush,
     )
 
 fsm_initialiser(time_out,
-    args(stream_read_t *ptStreamRead 
+    args(zero_strm_read_t *ptStreamRead 
     ))
 
     init_body(  
@@ -233,7 +233,7 @@ implement_fsm(time_out)
 
 
 
-static bool is_dma_busy(stream_read_t *ptThis)
+static bool is_dma_busy(zero_strm_read_t *ptThis)
 {
     bool bRet = false;
     
@@ -251,7 +251,7 @@ static bool is_dma_busy(stream_read_t *ptThis)
     return bRet;
 }
 
-static void set_dma_busy(stream_read_t *ptThis)
+static void set_dma_busy(zero_strm_read_t *ptThis)
 {
     if (NULL == ptThis) {
         return ;
@@ -260,7 +260,7 @@ static void set_dma_busy(stream_read_t *ptThis)
     this.bBusy = true;
 }
 
-void set_dma_idle(stream_read_t *ptThis)
+void set_dma_idle(zero_strm_read_t *ptThis)
 {
     if (NULL == ptThis) {
         return ;
@@ -269,7 +269,7 @@ void set_dma_idle(stream_read_t *ptThis)
     this.bBusy = false;
 }
 
-static bool is_really_time_out(stream_read_t *ptThis)
+static bool is_really_time_out(zero_strm_read_t *ptThis)
 {
     if (NULL == ptThis) {
         return false;
@@ -291,7 +291,7 @@ static bool is_really_time_out(stream_read_t *ptThis)
 
 
 
-static bool is_uart_idle(stream_read_t *ptThis)
+static bool is_uart_idle(zero_strm_read_t *ptThis)
 {
     bool bRet = false;
     if (NULL == ptThis) {
@@ -305,7 +305,7 @@ static bool is_uart_idle(stream_read_t *ptThis)
     return bRet;
 }
 
-void set_uart_busy(stream_read_t *ptThis)
+void set_uart_busy(zero_strm_read_t *ptThis)
 {
     
     if (NULL == ptThis) {
@@ -315,7 +315,7 @@ void set_uart_busy(stream_read_t *ptThis)
     this.bUartIdle = false;
 }
 
-void set_uart_idle(stream_read_t *ptThis)
+void set_uart_idle(zero_strm_read_t *ptThis)
 {
     if (NULL == ptThis) {
         return ;
@@ -324,7 +324,7 @@ void set_uart_idle(stream_read_t *ptThis)
     this.bUartIdle = true;
 }
 
-void record_current_data_count(stream_read_t *ptThis)
+void record_current_data_count(zero_strm_read_t *ptThis)
 {
     if (NULL == ptThis) {
         return;
@@ -333,7 +333,7 @@ void record_current_data_count(stream_read_t *ptThis)
     this.hwDmaCntUartIdle = (*this.fnDmaCntGet)();
 }
 
-static bool is_equal_to_count_before_time_out(stream_read_t *ptThis)
+static bool is_equal_to_count_before_time_out(zero_strm_read_t *ptThis)
 { 
     bool bRet = false;
     
@@ -349,7 +349,7 @@ static bool is_equal_to_count_before_time_out(stream_read_t *ptThis)
         
     return bRet;
 }
-static uint16_t get_dma_data_cnt(stream_read_t *ptThis)
+static uint16_t get_dma_data_cnt(zero_strm_read_t *ptThis)
 {
     if (NULL == ptThis) {
         return false;
@@ -358,7 +358,7 @@ static uint16_t get_dma_data_cnt(stream_read_t *ptThis)
     return (this.hwDmaSizeTotal - (*this.fnDmaCntGet)());
 }
 
-static void update_data_cnt(stream_read_t *ptThis,uint16_t hwDataCnt)
+static void update_data_cnt(zero_strm_read_t *ptThis,uint16_t hwDataCnt)
 {
     if (NULL == ptThis
         ||0 == hwDataCnt ) {
@@ -369,7 +369,7 @@ static void update_data_cnt(stream_read_t *ptThis,uint16_t hwDataCnt)
 }
 
 
-void  set_target_time(stream_read_t *ptThis)
+void  set_target_time(zero_strm_read_t *ptThis)
 {
     if  (NULL == ptThis) {
         return;
@@ -379,7 +379,7 @@ void  set_target_time(stream_read_t *ptThis)
     this.bTimerStart = true;
 }
 
-static bool is_timer_time_out(stream_read_t *ptThis)
+static bool is_timer_time_out(zero_strm_read_t *ptThis)
 {
     bool bRet = false;
     

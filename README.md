@@ -1,20 +1,20 @@
 # zero_strm
 
-# stream_read 和 stream_write 使用文档
+# zero_strm_read 和 zero_strm_write 使用文档
 
-这是一份关于 `stream` 项目中 `stream_read` 和 `stream_write` 模块的使用文档。这两个模块提供了基于DMA的UART数据收发抽象层,通过有限状态机(FSM)协调异步数据传输和缓冲区管理。
+这是一份关于 `zero_strm` 项目中 `zero_strm_read` 和 `zero_strm_write` 模块的使用文档。这两个模块提供了基于DMA的UART数据收发抽象层,通过有限状态机(FSM)协调异步数据传输和缓冲区管理。
 
-## stream_read - 数据接收
+## zero_strm_read - 数据接收
 
 ### 功能概述
 
-`stream_read` 模块通过DMA从UART硬件接收数据,并提供简单的字节流API供应用层读取。
+`zero_strm_read` 模块通过DMA从UART硬件接收数据,并提供简单的字节流API供应用层读取。
 
 ### 初始化
 
 #### 配置结构体
 
-使用 `stream_read_cfg_t` 配置接收参数: 
+使用 `zero_strm_read_cfg_t` 配置接收参数: 
 
 | 字段             | 类型               | 说明                           |
 | ---------------- | ------------------ | ------------------------------ |
@@ -25,17 +25,17 @@
 | `fnDmaCntGet`    | `dma_cnt_get_fn*`  | 获取DMA剩余计数回调            |
 #### 时间
 
-用户需要将`uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tStreamRead)`放入一个以`1ms`为周期的中断服务函数中
+用户需要将`zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead)`放入一个以`1ms`为周期的中断服务函数中
 
 
 
 #### 初始化函数
 
-调用 `stream_read_init()` 初始化模块: 
+调用 `zero_strm_read_init()` 初始化模块: 
 
 ```c
-stream_read_t g_tStreamRead;
-stream_read_cfg_t s_tStreamReadCfg = {
+zero_strm_read_t g_tZStrmRead;
+zero_strm_read_cfg_t s_tZStrmReadCfg = {
     .pchBuffer     = s_chReadBuffer,
     .hwSize        = sizeof(s_chReadBuffer),
     .wTimeOutMs    = 2000,
@@ -43,16 +43,16 @@ stream_read_cfg_t s_tStreamReadCfg = {
     .fnDmaCntGet   = get_dma_cnt,
 };
 
-stream_read_init(&g_tStreamRead, &s_tStreamReadCfg);
+zero_strm_read_init(&g_tZStrmRead, &s_tZStrmReadCfg);
 ```
 
 ### 读取数据
 
-使用 `stream_read()` 函数逐字节读取数据: 
+使用 `zero_strm_read()` 函数逐字节读取数据: 
 
 ```c
 uint8_t chByte;
-if (stream_read(&g_tStreamRead, &chByte)) {
+if (zero_strm_read(&g_tZStrmRead, &chByte)) {
     // 成功读取一个字节
     printf("%c", chByte);
 }
@@ -72,7 +72,7 @@ if (stream_read(&g_tStreamRead, &chByte)) {
 void DMA1_Channel5_IRQHandler(void) {
     if (RESET != DMA_GetITStatus(DMA1_IT_TC5)) {
         DMA_ClearITPendingBit(DMA1_IT_TC5);
-        uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tStreamRead);
+        zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead);
     }
 }
 ```
@@ -84,7 +84,7 @@ void DMA1_Channel5_IRQHandler(void) {
 ```c
 void USART1_IRQHandler(void) {
     if (USART_GetITStatus(USART1, USART_IT_IDLE) != RESET) {
-        uart_idle_insert_to_uart_irq_event_handler(&g_tStreamRead);
+        zero_strm_uart_idle_insert_to_uart_irq_event_handler(&g_tZStrmRead);
     }
 }
 ```
@@ -94,14 +94,14 @@ void USART1_IRQHandler(void) {
 
 ```c
 void TIMx_IRQHandler(void) {
-    uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tStreamRead);
+    zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead);
 }
 ```
-## stream_write - 数据发送
+## zero_strm__write - 数据发送
 
 ### 功能概述
 
-`stream_write` 模块提供通过DMA向UART发送数据的高层接口,自动管理缓冲和DMA事务协调。 
+`zero_strm_write` 模块提供通过DMA向UART发送数据的高层接口,自动管理缓冲和DMA事务协调。 
 
 ### 初始化
 
@@ -117,26 +117,26 @@ void TIMx_IRQHandler(void) {
 
 #### 初始化函数
 
-调用 `stream_write_init()` 初始化模块: 
+调用 `zero_strm_write_init()` 初始化模块: 
 
 ```c
-stream_write_t g_tStreamWrite;
-stream_write_cfg_t s_tStreamWriteCfg = {
+zero_strm_write_t g_tZStrmWrite;
+zero_strm_write_cfg_t s_tZStrmWriteCfg = {
     .pchBuffer     = s_chWriteBuffer,
     .hwSize        = sizeof(s_chWriteBuffer),
     .fnDmaSendData = uart_dma_data_send    
 };
 
-stream_write_init(&g_tStreamWrite, &s_tStreamWriteCfg);
+zero_strm_write_init(&g_tZStrmWrite, &s_tZStrmWriteCfg);
 ```
 
 ### 发送数据
 
-使用 `stream_write()` 函数逐字节发送数据: 
+使用 `zero_strm_write()` 函数逐字节发送数据: 
 
 ```c
 uint8_t chByte = 'A';
-if (stream_write(&g_tStreamWrite, chByte)) {
+if (zero_strm_write(&g_tZStrmWrite, chByte)) {
     // 字节已成功加入发送队列
 }
 
@@ -154,7 +154,7 @@ void DMA1_Channel4_IRQHandler(void) {
     if (RESET != DMA_GetITStatus(DMA1_IT_TC4)) {
         DMA_Cmd(DMA1_Channel4, DISABLE);
         DMA_ClearITPendingBit(DMA1_IT_TC4);
-        dma_send_data_cpl_event_handler(&g_tStreamWrite);
+        zero_strm_dma_send_data_cpl_event_handler(&g_tZStrmWrite);
     }
 }
 ```
@@ -166,7 +166,7 @@ void DMA1_Channel4_IRQHandler(void) {
 以下是一个完整的使用示例,展示了如何初始化和使用这两个模块: 
 
 ```c
-#include "stream.h"
+#include "zero_strm.h"
 
 __attribute__((aligned(32)))
 static uint8_t s_chReadBuffer[1024];
@@ -174,7 +174,7 @@ __attribute__((aligned(32)))
 static uint8_t s_chWriteBuffer[1024];
 
 
-static stream_read_cfg_t s_tStreamReadCfg = {
+static zero_strm_read_cfg_t s_tZStrmReadCfg = {
     .pchBuffer     = s_chReadBuffer,
     .hwSize        = sizeof(s_chReadBuffer),
     .wTimeOutMs    = 2000,
@@ -182,75 +182,77 @@ static stream_read_cfg_t s_tStreamReadCfg = {
     .fnDmaCntGet   = get_dma_cnt,
 };
 
-static stream_write_cfg_t s_tStreamWriteCfg = {
+static zero_strm_write_cfg_t s_tZStrmWriteCfg = {
     .pchBuffer     = s_chWriteBuffer,
     .hwSize        = sizeof(s_chWriteBuffer),
     .fnDmaSendData = uart_dma_data_send    
 };
 
 
-stream_read_t g_tStreamRead;
-stream_write_t g_tStreamWrite;
+stream_read_t g_tZStrmRead;
+stream_write_t g_tZStrmWrite;
 
 int main(void) {
     bsp_init();
     
     // 初始化读写模块
-    stream_read_init(&g_tStreamRead, &s_tStreamReadCfg);
-    stream_write_init(&g_tStreamWrite, &s_tStreamWriteCfg);
+    zero_strm_read_init(&g_tZStrmRead, &s_tZStrmReadCfg);
+    zero_strm_write_init(&g_tZStrmWrite, &s_tZStrmWriteCfg);
     
     // 主循环:读取数据并回显
     while(1) {
         uint8_t chByte;
-        if (stream_read(&g_tStreamRead,&chByte)) {
-            stream_write(&g_tStreamWrite,chByte);
+        if (zero_strm_read(&g_tZStrmRead,&chByte)) {
+            zero_strm_write(&g_tZStrmWrite,chByte);
         }
     }
 }
 ```
 ## Notes
 
-这两个模块都使用有限状态机(FSM)来管理复杂的异步操作。`stream_read` 使用三个FSM(dequeue、flush、timeout)协调数据接收,  而 `stream_write` 使用两个FSM(enqueue、flush)管理数据发送。
+这两个模块都使用有限状态机(FSM)来管理复杂的异步操作。`zero_strm_read` 使用三个FSM(dequeue、flush、timeout)协调数据接收,  而 `zero_strm_write` 使用两个FSM(enqueue、flush)管理数据发送。
 
 两个模块都依赖于底层的块内存管理器(`mem_blk_fifo_t`)和字节FIFO缓冲区(`byte_fifo_t`)来实现高效的内存管理和数据缓冲。
 
-# stream
 
-# Documentation for Using `stream_read` and `stream_write`
 
-This is a user manual for the `stream_read` and `stream_write` modules in the `stream` project. These two modules provide an abstract layer for UART data transmission and reception based on DMA, coordinating asynchronous data transfer and buffer management through finite state machines (FSMs).
+# zero_strm
 
-## stream_read - Data Reception
+# zero_strm_read and zero_strm_write Usage Documentation
+
+This document provides an overview of the `zero_strm_read` and `zero_strm_write` modules in the `zero_strm` project. These modules offer a DMA-based UART data transmission and reception abstraction layer, coordinating asynchronous data transfer and buffer management through a finite state machine (FSM).
+
+## zero_strm_read - Data Reception
 
 ### Overview
 
-The `stream_read` module receives data from UART hardware via DMA and provides a simple byte stream API for the application layer to read data.
+The `zero_strm_read` module receives data from UART hardware via DMA and provides a simple byte stream API for application-level reading.
 
 ### Initialization
 
 #### Configuration Structure
 
-Use the `stream_read_cfg_t` structure to configure the reception parameters:
+Configure reception parameters using the `zero_strm_read_cfg_t` structure:
 
 | Field          | Type               | Description                                 |
 | -------------- | ------------------ | ------------------------------------------- |
-| `pchBuffer`    | `uint8_t*`         | Pointer to the reception buffer memory pool |
-| `hwSize`       | `uint16_t`         | Total buffer size                           |
+| `pchBuffer`    | `uint8_t*`         | Pointer to the reception buffer pool        |
+| `hwSize`       | `uint16_t`         | Total size of the buffer                    |
 | `wTimeOutMs`   | `uint32_t`         | Timer interrupt setting time (milliseconds) |
 | `fnDmaStartRx` | `dma_start_rx_fn*` | DMA start callback function                 |
-| `fnDmaCntGet`  | `dma_cnt_get_fn*`  | Callback to get DMA remaining count         |
+| `fnDmaCntGet`  | `dma_cnt_get_fn*`  | DMA remaining count retrieval callback      |
 
 #### Timing
 
-Users need to place `uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tStreamRead)` in an interrupt service routine with a `1ms` period.
+Users need to insert `zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead)` into an interrupt service function with a 1ms period.
 
 #### Initialization Function
 
-Call `stream_read_init()` to initialize the module:
+Call `zero_strm_read_init()` to initialize the module:
 
 ```c
-stream_read_t g_tStreamRead;
-stream_read_cfg_t s_tStreamReadCfg = {
+zero_strm_read_t g_tZStrmRead;
+zero_strm_read_cfg_t s_tZStrmReadCfg = {
     .pchBuffer     = s_chReadBuffer,
     .hwSize        = sizeof(s_chReadBuffer),
     .wTimeOutMs    = 2000,
@@ -258,28 +260,28 @@ stream_read_cfg_t s_tStreamReadCfg = {
     .fnDmaCntGet   = get_dma_cnt,
 };
 
-stream_read_init(&g_tStreamRead, &s_tStreamReadCfg);
+zero_strm_read_init(&g_tZStrmRead, &s_tZStrmReadCfg);
 ```
 
 ### Reading Data
 
-Use the `stream_read()` function to read data byte by byte:
+Use the `zero_strm_read()` function to read data byte by byte:
 
 ```c
 uint8_t chByte;
-if (stream_read(&g_tStreamRead, &chByte)) {
-    // Successfully read one byte
+if (zero_strm_read(&g_tZStrmRead, &chByte)) {
+    // Successfully read a byte
     printf("%c", chByte);
 }
 
-The function returns `true` to indicate successful reading, and `false` if no data is available.
+The function returns `true` if a byte is successfully read, and `false` if no data is currently available.
 ```
 
 ### Interrupt Handling
 
-The following event handling functions need to be called in the corresponding interrupt service routines:
+The following event handler functions need to be called in the corresponding interrupt service routines:
 
-#### DMA Half-Full Interrupt
+#### DMA Half Full Interrupt
 
 Called when the number of bytes received by DMA is half of the set value:
 
@@ -287,19 +289,19 @@ Called when the number of bytes received by DMA is half of the set value:
 void DMA1_Channel5_IRQHandler(void) {
     if (RESET != DMA_GetITStatus(DMA1_IT_TC5)) {
         DMA_ClearITPendingBit(DMA1_IT_TC5);
-        uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tStreamRead);
+        zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead);
     }
 }
 ```
 
 #### UART Idle Interrupt
 
-Called when UART detects an idle line:
+Called when the UART detects an idle line:
 
 ```c
 void USART1_IRQHandler(void) {
     if (USART_GetITStatus(USART1, USART_IT_IDLE) != RESET) {
-        uart_idle_insert_to_uart_irq_event_handler(&g_tStreamRead);
+        zero_strm_uart_idle_insert_to_uart_irq_event_handler(&g_tZStrmRead);
     }
 }
 ```
@@ -310,59 +312,59 @@ Called when the timeout timer expires:
 
 ```c
 void TIMx_IRQHandler(void) {
-    uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tStreamRead);
+    zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead);
 }
 ```
 
-## stream_write - Data Transmission
+## zero_strm_write - Data Transmission
 
 ### Overview
 
-The `stream_write` module provides a high-level interface for sending data to UART via DMA, automatically managing buffering and coordinating DMA transactions.
+The `zero_strm_write` module provides a high-level interface for sending data to UART via DMA, automatically managing buffering and coordinating DMA transactions.
 
 ### Initialization
 
 #### Configuration Structure
 
-Use the `stream_write_cfg_t` structure to configure the transmission parameters:
+Configure transmission parameters using the `zero_strm_write_cfg_t` structure:
 
-| Field           | Type                | Description                                    |
-| --------------- | ------------------- | ---------------------------------------------- |
-| `pchBuffer`     | `uint8_t*`          | Pointer to the transmission buffer memory pool |
-| `hwSize`        | `uint16_t`          | Total buffer size                              |
-| `fnDmaSendData` | `dma_send_data_fn*` | DMA send start callback function               |
+| Field           | Type                | Description                             |
+| --------------- | ------------------- | --------------------------------------- |
+| `pchBuffer`     | `uint8_t*`          | Pointer to the transmission buffer pool |
+| `hwSize`        | `uint16_t`          | Total size of the buffer                |
+| `fnDmaSendData` | `dma_send_data_fn*` | DMA send start callback function        |
 
 #### Initialization Function
 
-Call `stream_write_init()` to initialize the module:
+Call `zero_strm_write_init()` to initialize the module:
 
 ```c
-stream_write_t g_tStreamWrite;
-stream_write_cfg_t s_tStreamWriteCfg = {
+zero_strm_write_t g_tZStrmWrite;
+zero_strm_write_cfg_t s_tZStrmWriteCfg = {
     .pchBuffer     = s_chWriteBuffer,
     .hwSize        = sizeof(s_chWriteBuffer),
     .fnDmaSendData = uart_dma_data_send    
 };
 
-stream_write_init(&g_tStreamWrite, &s_tStreamWriteCfg);
+zero_strm_write_init(&g_tZStrmWrite, &s_tZStrmWriteCfg);
 ```
 
 ### Sending Data
 
-Use the `stream_write()` function to send data byte by byte:
+Use the `zero_strm_write()` function to send data byte by byte:
 
 ```c
 uint8_t chByte = 'A';
-if (stream_write(&g_tStreamWrite, chByte)) {
-    // Byte has been successfully added to the transmission queue
+if (zero_strm_write(&g_tZStrmWrite, chByte)) {
+    // Byte has been successfully added to the send queue
 }
 
-The function returns `true` to indicate that the byte has been enqueued, and `false` if a retry is needed later (buffer full).
+The function returns `true` if the byte is queued, and `false` if a retry is needed (buffer full).
 ```
 
 ### Interrupt Handling
 
-#### DMA Transmission Complete Interrupt
+#### DMA Transfer Complete Interrupt
 
 Called when DMA transmission is complete:
 
@@ -371,24 +373,24 @@ void DMA1_Channel4_IRQHandler(void) {
     if (RESET != DMA_GetITStatus(DMA1_IT_TC4)) {
         DMA_Cmd(DMA1_Channel4, DISABLE);
         DMA_ClearITPendingBit(DMA1_IT_TC4);
-        dma_send_data_cpl_event_handler(&g_tStreamWrite);
+        zero_strm_dma_send_data_cpl_event_handler(&g_tZStrmWrite);
     }
 }
 ```
 
 ## Complete Example
 
-The following is a complete usage example demonstrating how to initialize and use these two modules:
+The following is a complete usage example, demonstrating how to initialize and use these modules:
 
 ```c
-#include "stream.h"
+#include "zero_strm.h"
 
 __attribute__((aligned(32)))
 static uint8_t s_chReadBuffer[1024];
 __attribute__((aligned(32)))
 static uint8_t s_chWriteBuffer[1024];
 
-static stream_read_cfg_t s_tStreamReadCfg = {
+static zero_strm_read_cfg_t s_tZStrmReadCfg = {
     .pchBuffer     = s_chReadBuffer,
     .hwSize        = sizeof(s_chReadBuffer),
     .wTimeOutMs    = 2000,
@@ -396,27 +398,27 @@ static stream_read_cfg_t s_tStreamReadCfg = {
     .fnDmaCntGet   = get_dma_cnt,
 };
 
-static stream_write_cfg_t s_tStreamWriteCfg = {
+static zero_strm_write_cfg_t s_tZStrmWriteCfg = {
     .pchBuffer     = s_chWriteBuffer,
     .hwSize        = sizeof(s_chWriteBuffer),
     .fnDmaSendData = uart_dma_data_send    
 };
 
-stream_read_t g_tStreamRead;
-stream_write_t g_tStreamWrite;
+zero_strm_read_t g_tZStrmRead;
+zero_strm_write_t g_tZStrmWrite;
 
 int main(void) {
     bsp_init();
     
     // Initialize read and write modules
-    stream_read_init(&g_tStreamRead, &s_tStreamReadCfg);
-    stream_write_init(&g_tStreamWrite, &s_tStreamWriteCfg);
+    zero_strm_read_init(&g_tZStrmRead, &s_tZStrmReadCfg);
+    zero_strm_write_init(&g_tZStrmWrite, &s_tZStrmWriteCfg);
     
-    // Main loop: read data and echo back
+    // Main loop: read data and echo
     while(1) {
         uint8_t chByte;
-        if (stream_read(&g_tStreamRead,&chByte)) {
-            stream_write(&g_tStreamWrite,chByte);
+        if (zero_strm_read(&g_tZStrmRead, &chByte)) {
+            zero_strm_write(&g_tZStrmWrite, chByte);
         }
     }
 }
@@ -424,9 +426,4 @@ int main(void) {
 
 ## Notes
 
-Both modules use finite state machines (FSMs) to manage complex asynchronous operations. `stream_read` uses three FSMs (dequeue, flush, timeout) to coordinate data reception, while `stream_write` uses two FSMs (enqueue, flush) to manage data transmission.
-
-Both modules rely on the underlying block memory manager (`mem_blk_fifo_t`) and byte FIFO buffer (`byte_fifo_t`) to implement efficient memory management and data buffering.
-
-
-
+Both modules use finite state machines (FSMs) to manage complex asynchronous operations. The `zero_strm_read` module uses three FSMs (dequeue, flush, timeout) to coordinate data reception, while the `zero_strm_write` module uses two FSMs (enqueue, flush) to manage data transmission. Both modules rely on the underlying block memory manager (`mem_blk_fifo_t`) and byte FIFO buffer (`byte_fifo_t`) for efficient memory management and data buffering.

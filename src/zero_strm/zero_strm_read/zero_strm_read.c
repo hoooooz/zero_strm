@@ -4,21 +4,21 @@
 
 
 extern_fsm_initialiser(dequeue,
-    args(stream_read_t *ptStreamRead
+    args(zero_strm_read_t *ptStreamRead
     )) ;
 
 extern_fsm_initialiser(stream_read_flush,
-    args(stream_read_t *ptStreamRead,
+    args(zero_strm_read_t *ptStreamRead,
     mem_blk_t **pptByteFifo,
     dma_start_rx_fn *fnDmaStartRx
     )) ;
 
 extern_fsm_initialiser(time_out,
-    args(stream_read_t *ptStreamRead
+    args(zero_strm_read_t *ptStreamRead
     )) ;
 
 
-void zero_strm_read_init(stream_read_t *ptThis,stream_read_cfg_t *ptCfg )
+void zero_strm_read_init(zero_strm_read_t *ptThis,zero_strm_read_cfg_t *ptCfg )
 {
     if (   NULL == ptThis 
         || NULL == ptCfg ) {
@@ -27,7 +27,7 @@ void zero_strm_read_init(stream_read_t *ptThis,stream_read_cfg_t *ptCfg )
         
     read_fifo_t *ptAddr = ptCfg->pchBuffer;
     uint8_t chCnt       = ptCfg->hwSize/sizeof(read_fifo_t);
-    memset(&this,0,sizeof(stream_read_t));
+    memset(&this,0,sizeof(zero_strm_read_t));
 
     zero_strm_block_fifo_init(&(this.tMemBlockFifo)); 
     for(uint8_t chIndex = 0;chIndex < chCnt;chIndex++) {
@@ -62,7 +62,7 @@ void zero_strm_read_init(stream_read_t *ptThis,stream_read_cfg_t *ptCfg )
 }
 
 
-bool zero_strm_read(stream_read_t *ptThis,byte *pchChar) 
+bool zero_strm_read(zero_strm_read_t *ptThis,byte *pchChar) 
 {
     bool bRet = false ;
     if (   NULL == ptThis 
@@ -77,7 +77,7 @@ bool zero_strm_read(stream_read_t *ptThis,byte *pchChar)
     return bRet;
 }
 
-void zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(stream_read_t *ptThis)
+void zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(zero_strm_read_t *ptThis)
 {
     if (NULL == ptThis) {
         return ;
@@ -89,7 +89,7 @@ void zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(stream_read_t *
 }
 
 
-void zero_strm_uart_idle_insert_to_uart_irq_event_handler(stream_read_t *ptThis)
+void zero_strm_uart_idle_insert_to_uart_irq_event_handler(zero_strm_read_t *ptThis)
 {
     if ( NULL == ptThis ) {
         return;
@@ -101,7 +101,7 @@ void zero_strm_uart_idle_insert_to_uart_irq_event_handler(stream_read_t *ptThis)
     
 }
 
-void zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(stream_read_t *ptThis) 
+void zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(zero_strm_read_t *ptThis) 
 {
     if ( NULL == ptThis ) {
         return;

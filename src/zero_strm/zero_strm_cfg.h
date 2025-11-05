@@ -19,13 +19,13 @@ typedef struct  {
     uint32_t wTimeOutMs;
     dma_start_rx_fn *fnDmaStartRx;
     dma_cnt_get_fn *fnDmaCntGet;
-} stream_read_cfg_t;
+} zero_strm_read_cfg_t;
 
 typedef struct {
     uint8_t *pchBuffer;
     uint16_t hwSize;
     dma_send_data_fn *fnDmaSendData;     
-} stream_write_cfg_t ;
+} zero_strm_write_cfg_t ;
 
 
 #endif

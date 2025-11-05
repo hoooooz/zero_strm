@@ -2,16 +2,16 @@
 #include ".\zero_strm_write.h"
 
 extern_fsm_initialiser(enqueue,
-    args(stream_write_t *ptStreamWrite
+    args(zero_strm_write_t *ptStreamWrite
     ));
 
 extern_fsm_initialiser(stream_write_flush,
-    args(stream_write_t *ptStreamWrite,mem_blk_t **pptByteFifo,dma_start_fn *fnDmaStart
+    args(zero_strm_write_t *ptStreamWrite,mem_blk_t **pptByteFifo,dma_start_fn *fnDmaStart
     ))
 
 
 
-void zero_strm_write_init(stream_write_t *ptThis,stream_write_cfg_t *ptCfg)
+void zero_strm_write_init(zero_strm_write_t *ptThis,zero_strm_write_cfg_t *ptCfg)
 {
     if (NULL == ptThis 
         || NULL == ptCfg) {
@@ -20,7 +20,7 @@ void zero_strm_write_init(stream_write_t *ptThis,stream_write_cfg_t *ptCfg)
     
     write_fifo_t *ptAddr = ptCfg->pchBuffer;
     uint8_t chCnt        = ptCfg->hwSize/sizeof(write_fifo_t);
-    memset(&this,0,sizeof(stream_write_t));
+    memset(&this,0,sizeof(zero_strm_write_t));
      
     zero_strm_block_fifo_init(&(this.tMemBlockFifo)); 
     for(uint8_t chIndex = 0;chIndex < chCnt;chIndex++) {
@@ -55,7 +55,7 @@ void zero_strm_write_init(stream_write_t *ptThis,stream_write_cfg_t *ptCfg)
 
 
 
-bool zero_strm_write(stream_write_t *ptThis,byte tByte)
+bool zero_strm_write(zero_strm_write_t *ptThis,byte tByte)
 {
     bool bRet = false;
     if ( NULL == ptThis ) {
@@ -69,7 +69,7 @@ bool zero_strm_write(stream_write_t *ptThis,byte tByte)
     return bRet;
 }
 
-void zero_strm_dma_send_data_cpl_event_handler(stream_write_t *ptThis)
+void zero_strm_dma_send_data_cpl_event_handler(zero_strm_write_t *ptThis)
 {
     if (NULL == ptThis) {
         return ;

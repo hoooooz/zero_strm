@@ -12,7 +12,7 @@ typedef union {
 } write_fifo_t;
 
 
-typedef struct stream_write_t stream_write_t;
+typedef struct zero_strm_write_t zero_strm_write_t;
 
 
 declare_simple_fsm(enqueue);
@@ -28,7 +28,7 @@ extern_fsm_implementation(stream_write_flush);
 
 extern_simple_fsm(stream_write_flush,
     def_params(
-        stream_write_t *ptStreamWrite;
+        zero_strm_write_t *ptStreamWrite;
         mem_blk_t **pptByteFifo;
         void (*fnDmaStart)(mem_blk_t *ptFifoSend); 
         stream_write_flush_fn  *fnFlush ;
@@ -38,14 +38,14 @@ extern_simple_fsm(stream_write_flush,
 extern_simple_fsm(enqueue,
     def_params(
         fsm(stream_write_flush) fsmFlush;       
-        stream_write_t *ptStreamWrite;
+        zero_strm_write_t *ptStreamWrite;
         enqueue_fn *fnEnqueue;   
     )
 )
 
 
 
-struct stream_write_t {
+struct zero_strm_write_t {
     bool bBusy ;
     mem_blk_t *ptFifoSend ;
     mem_blk_t *ptByteFifo ;
@@ -65,11 +65,11 @@ struct stream_write_t {
 
 
 extern
-void zero_strm_write_init(stream_write_t *ptThis,stream_write_cfg_t *ptCfg) ;
+void zero_strm_write_init(zero_strm_write_t *ptThis,zero_strm_write_cfg_t *ptCfg) ;
 extern
-bool zero_strm_write(stream_write_t *ptThis,byte tByte) ;
+bool zero_strm_write(zero_strm_write_t *ptThis,byte tByte) ;
 extern
-void zero_strm_dma_send_data_cpl_event_handler(stream_write_t *ptThis) ;
+void zero_strm_dma_send_data_cpl_event_handler(zero_strm_write_t *ptThis) ;
 
 #endif
 

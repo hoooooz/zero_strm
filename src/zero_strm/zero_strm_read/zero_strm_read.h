@@ -5,7 +5,7 @@
 #include "..\..\common\common.h"
 #include "..\zero_strm_cfg.h"
 
-typedef struct stream_read_t stream_read_t;
+typedef struct zero_strm_read_t zero_strm_read_t;
 
 typedef union {
     mem_blk_t tList;
@@ -27,7 +27,7 @@ extern_fsm_implementation(time_out);
 
 extern_simple_fsm(stream_read_flush,
     def_params(           
-        stream_read_t  *ptStreamRead; 
+        zero_strm_read_t  *ptStreamRead; 
         mem_blk_t **pptByteFifo;
         mem_blk_t *ptByteFifo;
         dma_start_rx_fn *fnDmaStartRx;
@@ -37,7 +37,7 @@ extern_simple_fsm(stream_read_flush,
 
 extern_simple_fsm(dequeue,
     def_params(          
-        stream_read_t *ptStreamRead;
+        zero_strm_read_t *ptStreamRead;
         mem_blk_t *ptByteFifo;
         dequeue_fn *fnDequeue;
     )
@@ -45,13 +45,13 @@ extern_simple_fsm(dequeue,
 
 extern_simple_fsm(time_out,
     def_params(          
-        stream_read_t *ptStreamRead;
+        zero_strm_read_t *ptStreamRead;
         time_out_fn *fnTimeOut;
         fsm(stream_read_flush) fsmFlush;
     )
 )
 
-struct stream_read_t {
+struct zero_strm_read_t {
     bool bBusy ;
     bool bUartIdle;
     bool bTimerStart;
@@ -77,14 +77,14 @@ struct stream_read_t {
 
 
 extern
-void zero_strm_read_init(stream_read_t *ptThis,stream_read_cfg_t *ptCfg ) ;
+void zero_strm_read_init(zero_strm_read_t *ptThis,zero_strm_read_cfg_t *ptCfg ) ;
 extern
-void zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(stream_read_t *ptThis) ;
+void zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(zero_strm_read_t *ptThis) ;
 extern
-void zero_strm_uart_idle_insert_to_uart_irq_event_handler(stream_read_t  *ptThis) ;
+void zero_strm_uart_idle_insert_to_uart_irq_event_handler(zero_strm_read_t  *ptThis) ;
 extern
-bool zero_strm_read(stream_read_t *ptThis,byte *pchChar) ;
+bool zero_strm_read(zero_strm_read_t *ptThis,byte *pchChar) ;
 extern
-void zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(stream_read_t *ptThis) ;
+void zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(zero_strm_read_t *ptThis) ;
 #endif
 

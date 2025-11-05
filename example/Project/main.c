@@ -25,8 +25,8 @@
 /*============================ TYPES =========================================*/
 /*============================ GLOBAL VARIABLES ==============================*/
 
-stream_read_t g_tStreamRead;
-stream_write_t g_tStreamWrite;
+zero_strm_read_t g_tZStrmRead;
+zero_strm_write_t g_tZStrmWrite;
 /*============================ PROTOTYPES ====================================*/
 
 extern void uart1_DmaSendData(void);
@@ -42,7 +42,7 @@ __attribute__((aligned(32)))
 static uint8_t s_chWriteBuffer[1024];
 
 
-static stream_read_cfg_t s_tStreamReadCfg = {
+static zero_strm_read_cfg_t s_tZStrmReadCfg = {
     .pchBuffer     = s_chReadBuffer,
     .hwSize        = sizeof(s_chReadBuffer),
     .wTimeOutMs    = 2000,
@@ -50,7 +50,7 @@ static stream_read_cfg_t s_tStreamReadCfg = {
     .fnDmaCntGet   = get_dma_cnt,
 };
 
-static stream_write_cfg_t s_tStreamWriteCfg = {
+static zero_strm_write_cfg_t s_tZStrmWriteCfg = {
     .pchBuffer     = s_chWriteBuffer,
     .hwSize        = sizeof(s_chWriteBuffer),
     .fnDmaSendData = uart_dma_data_send    
@@ -71,13 +71,13 @@ int main(void)
 #endif
     uint8_t chByte = 0x40;
 
-    zero_strm_read_init(&g_tStreamRead,&s_tStreamReadCfg);
-    zero_strm_write_init(&g_tStreamWrite,&s_tStreamWriteCfg);
+    zero_strm_read_init(&g_tZStrmRead,&s_tZStrmReadCfg);
+    zero_strm_write_init(&g_tZStrmWrite,&s_tZStrmWriteCfg);
   
     while(1) {
         uint8_t chByte;
         
-        if ( zero_strm_read(&g_tStreamRead,&chByte) ) {
+        if ( zero_strm_read(&g_tZStrmRead,&chByte) ) {
             printf("%c",chByte); 
         }
     }
@@ -89,7 +89,7 @@ int stdout_putchar(int ch)
     uint8_t chByte = 0;
     chByte = (uint8_t)(0x000000ff&ch);
 
-    if ( zero_strm_write(&g_tStreamWrite,chByte) ) {
+    if ( zero_strm_write(&g_tZStrmWrite,chByte) ) {
         return ch;
     }
     return -1;
@@ -103,7 +103,7 @@ void DMA1_Channel4_IRQHandler(void)
         DMA_Cmd(DMA1_Channel4,DISABLE);
         DMA_ClearITPendingBit(DMA1_IT_TC4);
  
-        zero_strm_dma_send_data_cpl_event_handler(&g_tStreamWrite);
+        zero_strm_dma_send_data_cpl_event_handler(&g_tZStrmWrite);
     }
 #endif
 }
@@ -118,7 +118,7 @@ void DMA1_Channel5_IRQHandler(void)
    
     if ( RESET != DMA_GetITStatus(DMA1_IT_HT5) ) {       
         DMA_ClearITPendingBit(DMA1_IT_HT5);
-        zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tStreamRead);
+        zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead);
     }
    
     if ( RESET != DMA_GetITStatus(DMA1_IT_TC5) ) {
@@ -135,7 +135,7 @@ void USART1_IRQHandler(void)
         temp = USART1->DR;
         (void)temp;
 
-        zero_strm_uart_idle_insert_to_uart_irq_event_handler(&g_tStreamRead);
+        zero_strm_uart_idle_insert_to_uart_irq_event_handler(&g_tZStrmRead);
     }
 }
 
@@ -180,7 +180,7 @@ void TIM5_IRQHandler(void)
     timesr = TIMx->SR;
     if (timesr & TIM_IT_Update) {
         TIMx->SR = (uint16_t)~TIM_IT_Update;
-        zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tStreamRead) ;
+        zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead) ;
     }
     
     itstatus = timesr & TIM_IT_CC1;
