@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<package schemaVersion="1.7.37" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Open-CMSIS-Pack/Open-CMSIS-Pack-Spec/v1.7.37/schema/PACK.xsd">
+  <vendor>Hooz</vendor>
+  <name>zero_strm</name>
+  <description>a module that provide stream write and stream read functions </description>
+  <url>https://github.com/hoooooz/zero_strm</url>
+  <supportContact>https://github.com/hoooooz/zero_strm/issues</supportContact>
+  <license>LICENSE</license>
+  <!-- optional license file -->
+  <!-- 
+  <license>
+  </license>
+  -->
+  
+  <repository type="git">https://github.com/hoooooz/zero_strm.git</repository>
+  
+  <releases>
+    <release version="9.9.9" tag="9.9.9">
+      Active development ...
+    </release>
+
+    
+  </releases>
+
+  <keywords>
+    <!-- keywords for indexing -->
+    <keyword>Stream</keyword>
+    <keyword>Fsm</keyword>
+  
+  </keywords>
+  
+
+  <!-- apis section (optional - for Application Programming Interface descriptions) -->
+  <!-- 
+  <apis>
+  </apis>
+  -->
+
+  <!-- boards section (mandatory for Board Support Packs) -->
+  <!-- 
+  <boards>
+  </boards>
+  -->
+
+  <!-- devices section (mandatory for Device Family Packs) -->
+  <!--
+  <devices>
+  </devices>
+  -->
+
+  <!-- examples section (optional for all Software Packs)-->
+  <!--
+  <examples>
+  </examples>
+  -->
+  
+  <!-- conditions section (optional for all Software Packs)-->
+  <!--
+  <conditions>
+  </conditions>
+  -->
+
+    <components>
+            <component Cclass="Generic" Cversion="1.0.0" Cgroup="zero_strm" >
+              <description>a module that provide stream write and stream read functions</description>
+              <files>
+                
+                <file category="header"             name="src/zero_strm/zero_strm.h"/>
+                <file category="header"             name="src/zero_strm/zero_strm_cfg.h" attr="config" version="1.0.0" />
+
+                <file category="header"             name="src/zero_strm/zero_strm_read/fsm_dequeue.h"/>
+                <file category="sourceC"            name="src/zero_strm/zero_strm_read/fsm_dequeue.c"/>
+                <file category="header"             name="src/zero_strm/zero_strm_read/zero_strm_read.h"/>
+                <file category="sourceC"            name="src/zero_strm/zero_strm_read/zero_strm_read.c"/>
+
+                <file category="header"             name="src/zero_strm/zero_strm_write/fsm_enqueue.h"/>
+                <file category="sourceC"            name="src/zero_strm/zero_strm_write/fsm_enqueue.c"/>
+                <file category="header"             name="src/zero_strm/zero_strm_write/zero_strm_write.h"/>
+                <file category="sourceC"            name="src/zero_strm/zero_strm_write/zero_strm_write.c"/>
+
+
+                <file category="header"            name="src/common/common.h" />
+
+                <file category="header"            name="src/common/block/zero_strm_block.h" />
+                <file category="sourceC"           name="src/common/block/zero_strm_block.c" />
+                <file category="header"            name="src/common/byte_fifo/zero_strm_byte_fifo.h" />
+                <file category="sourceC"           name="src/common/byte_fifo/zero_strm_byte_fifo.c" />
+
+
+                <file category="header"            name="src/common/utilities/ooc.h" />
+                <file category="header"            name="src/common/utilities/simple_fsm.h" />
+                <file category="header"            name="src/common/utilities/3rd-party/PLOOC/plooc_class_simple.h" />
+              </files>
+
+
+            </component>
+    </components>
+  
+  <!-- optional taxonomy section for defining new component Class and Group names -->
+
+  <taxonomy>
+    <description Cclass="Generic" Cgroup="zero_strm" doc="documents/Doxygen/html/index.html">a module that provide stream write and stream read functions</description>
+  </taxonomy>
+
+  
+</package>
