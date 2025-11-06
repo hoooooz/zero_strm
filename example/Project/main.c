@@ -30,8 +30,8 @@ zero_strm_write_t g_tZStrmWrite;
 /*============================ PROTOTYPES ====================================*/
 
 extern void uart1_DmaSendData(void);
-static void uart_dma_data_get(mem_blk_t *ptThis);
-static void uart_dma_data_send(mem_blk_t *ptThis);
+static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis);
+static void uart_dma_data_send(zero_strm_mem_blk_t *ptThis);
 static uint16_t get_dma_cnt(void) ;
 static void time_trigger(uint32_t wTimeOut);
 /*============================ LOCAL VARIABLES ===============================*/
@@ -140,7 +140,7 @@ void USART1_IRQHandler(void)
 }
 
 
-static void uart_dma_data_get(mem_blk_t *ptThis)
+static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis)
 {
     if ( NULL == ptThis ) {
         return ;
@@ -152,7 +152,7 @@ static void uart_dma_data_get(mem_blk_t *ptThis)
     DMA_Cmd(DMA1_Channel5,ENABLE);
 }
 
-static void uart_dma_data_send(mem_blk_t *ptThis)
+static void uart_dma_data_send(zero_strm_mem_blk_t *ptThis)
 {
     if ( NULL == ptThis ) {
         return ;

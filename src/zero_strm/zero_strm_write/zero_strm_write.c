@@ -21,7 +21,7 @@ extern_fsm_initialiser(enqueue,
     ));
 
 extern_fsm_initialiser(stream_write_flush,
-    args(zero_strm_write_t *ptStreamWrite,mem_blk_t **pptByteFifo,dma_start_fn *fnDmaStart
+    args(zero_strm_write_t *ptStreamWrite,zero_strm_mem_blk_t **pptByteFifo,zero_strm_dma_send_data_fn *fnDmaStart
     ))
 
 

@@ -23,19 +23,19 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef struct mem_blk_t {
-    struct mem_blk_t *ptNext;
+typedef struct zero_strm_mem_blk_t {
+    struct zero_strm_mem_blk_t *ptNext;
     size_t tSizeInByte;
     uint8_t chMemory[];
-} mem_blk_t;
+} zero_strm_mem_blk_t;
 
-typedef struct mem_blk_fifo_t {
-    mem_blk_t *ptFreeList;
+typedef struct zero_strm_mem_blk_fifo_t {
+    zero_strm_mem_blk_t *ptFreeList;
     struct {
-        mem_blk_t *ptHead;
-        mem_blk_t *ptTail;
+        zero_strm_mem_blk_t *ptHead;
+        zero_strm_mem_blk_t *ptTail;
     } FIFO;
-} mem_blk_fifo_t;
+} zero_strm_mem_blk_fifo_t;
 
 
 
@@ -45,15 +45,15 @@ typedef struct mem_blk_fifo_t {
 #define BLOCK_APPEND(__PTOBJ,__PTNEWNODE)     zero_strm_block_append(__PTOBJ,__PTNEWNODE)
 #define BLOCK_FETCH(__PTOBJ)                  zero_strm_block_fetch(__PTOBJ)
 
-    void zero_strm_block_fifo_init(mem_blk_fifo_t *ptThis) ;
+    void zero_strm_block_fifo_init(zero_strm_mem_blk_fifo_t *ptThis) ;
 extern 
-    void zero_strm_block_free(mem_blk_fifo_t *ptThis,mem_blk_t *ptFreeBlock);
+    void zero_strm_block_free(zero_strm_mem_blk_fifo_t *ptThis,zero_strm_mem_blk_t *ptFreeBlock);
 extern 
-    mem_blk_t *zero_strm_block_new(mem_blk_fifo_t *ptThis) ;
+    zero_strm_mem_blk_t *zero_strm_block_new(zero_strm_mem_blk_fifo_t *ptThis) ;
 extern 
-    bool zero_strm_block_append(mem_blk_fifo_t *ptThis, mem_blk_t *ptNewNode) ;
+    bool zero_strm_block_append(zero_strm_mem_blk_fifo_t *ptThis, zero_strm_mem_blk_t *ptNewNode) ;
 extern 
-    mem_blk_t *zero_strm_block_fetch(mem_blk_fifo_t *ptThis) ;
+    zero_strm_mem_blk_t *zero_strm_block_fetch(zero_strm_mem_blk_fifo_t *ptThis) ;
 
 #endif
 

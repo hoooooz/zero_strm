@@ -24,8 +24,8 @@ extern_fsm_initialiser(dequeue,
 
 extern_fsm_initialiser(stream_read_flush,
     args(zero_strm_read_t *ptStreamRead,
-    mem_blk_t **pptByteFifo,
-    dma_start_rx_fn *fnDmaStartRx
+    zero_strm_mem_blk_t **pptByteFifo,
+    zero_strm_dma_start_rx_fn *fnDmaStartRx
     )) ;
 
 extern_fsm_initialiser(time_out,

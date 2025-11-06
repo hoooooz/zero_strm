@@ -24,8 +24,8 @@
 typedef struct zero_strm_read_t zero_strm_read_t;
 
 typedef union {
-    mem_blk_t tList;
-    uint8_t buffer[sizeof(mem_blk_t) + READ_BUFF_CNT];
+    zero_strm_mem_blk_t tList;
+    uint8_t buffer[sizeof(zero_strm_mem_blk_t) + READ_BUFF_CNT];
 } read_fifo_t;
 
 declare_simple_fsm(dequeue);
@@ -44,9 +44,9 @@ extern_fsm_implementation(time_out);
 extern_simple_fsm(stream_read_flush,
     def_params(           
         zero_strm_read_t  *ptStreamRead; 
-        mem_blk_t **pptByteFifo;
-        mem_blk_t *ptByteFifo;
-        dma_start_rx_fn *fnDmaStartRx;
+        zero_strm_mem_blk_t **pptByteFifo;
+        zero_strm_mem_blk_t *ptByteFifo;
+        zero_strm_dma_start_rx_fn *fnDmaStartRx;
         stream_read_flush_fn  *fnFlush;
     )
 )
@@ -54,7 +54,7 @@ extern_simple_fsm(stream_read_flush,
 extern_simple_fsm(dequeue,
     def_params(          
         zero_strm_read_t *ptStreamRead;
-        mem_blk_t *ptByteFifo;
+        zero_strm_mem_blk_t *ptByteFifo;
         dequeue_fn *fnDequeue;
     )
 )
@@ -71,15 +71,15 @@ struct zero_strm_read_t {
     bool bBusy ;
     bool bUartIdle;
     bool bTimerStart;
-    mem_blk_fifo_t tMemBlockFifo ;   
-    byte_fifo_t tByteFifo ; 
-    mem_blk_t *ptByteFifoDmaRx ; 
-    mem_blk_t *ptByteFifoEmpty ;     
+    zero_strm_mem_blk_fifo_t tMemBlockFifo ;   
+    zero_strm_byte_fifo_t tByteFifo ; 
+    zero_strm_mem_blk_t *ptByteFifoDmaRx ; 
+    zero_strm_mem_blk_t *ptByteFifoEmpty ;     
     uint16_t hwDmaCntUartIdle;
     uint32_t wSetTime;
     uint32_t wTimeStamp;
-    dma_start_rx_fn *fnDmaStartRx;
-    dma_cnt_get_fn *fnDmaCntGet;
+    zero_strm_dma_start_rx_fn *fnDmaStartRx;
+    zero_strm_dma_cnt_get_fn *fnDmaCntGet;
     fsm(stream_read_flush) fsmFlushHt ;  
     fsm(dequeue) fsmDequeue ;
     fsm(time_out)  fsmTimeOut ;

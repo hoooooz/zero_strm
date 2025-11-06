@@ -21,16 +21,16 @@
 #define this    (*ptThis)
 
 
-void zero_strm_block_fifo_init(mem_blk_fifo_t *ptThis)  
+void zero_strm_block_fifo_init(zero_strm_mem_blk_fifo_t *ptThis)  
 {   
     if ( NULL == ptThis ) {
         return;
     }
     
-    memset(&this,0,sizeof(mem_blk_fifo_t));  
+    memset(&this,0,sizeof(zero_strm_mem_blk_fifo_t));  
 }
 
-void zero_strm_block_free(mem_blk_fifo_t *ptThis,mem_blk_t *ptFreeBlock) 
+void zero_strm_block_free(zero_strm_mem_blk_fifo_t *ptThis,zero_strm_mem_blk_t *ptFreeBlock) 
 {   
     if ( NULL == ptThis ) {
         return ;
@@ -43,12 +43,12 @@ void zero_strm_block_free(mem_blk_fifo_t *ptThis,mem_blk_t *ptFreeBlock)
     this.ptFreeList = ptFreeBlock; 
 }
 
-mem_blk_t *zero_strm_block_new(mem_blk_fifo_t *ptThis) 
+zero_strm_mem_blk_t *zero_strm_block_new(zero_strm_mem_blk_fifo_t *ptThis) 
 {     
     if ( NULL == ptThis ) {
         return NULL;
     }
-    mem_blk_t *ptTemp = this.ptFreeList;  
+    zero_strm_mem_blk_t *ptTemp = this.ptFreeList;  
     if ( NULL == ptTemp ) {
         return NULL;
     }
@@ -58,7 +58,7 @@ mem_blk_t *zero_strm_block_new(mem_blk_fifo_t *ptThis)
     return ptTemp;
 }
 
-bool zero_strm_block_append(mem_blk_fifo_t *ptThis,mem_blk_t *ptNewNode) 
+bool zero_strm_block_append(zero_strm_mem_blk_fifo_t *ptThis,zero_strm_mem_blk_t *ptNewNode) 
 {
     if ( NULL == ptNewNode ) {
         return false;
@@ -81,12 +81,12 @@ bool zero_strm_block_append(mem_blk_fifo_t *ptThis,mem_blk_t *ptNewNode)
     return true;
 }
 
-mem_blk_t *zero_strm_block_fetch(mem_blk_fifo_t *ptThis) 
+zero_strm_mem_blk_t *zero_strm_block_fetch(zero_strm_mem_blk_fifo_t *ptThis) 
 {
     if ( NULL == ptThis ) {
         return NULL;
     }
-    mem_blk_t *ptTemp = this.FIFO.ptHead;
+    zero_strm_mem_blk_t *ptTemp = this.FIFO.ptHead;
     if ( NULL == ptTemp ) {
         return NULL;
     }

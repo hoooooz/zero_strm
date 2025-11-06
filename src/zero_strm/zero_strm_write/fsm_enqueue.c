@@ -20,8 +20,8 @@
 def_simple_fsm(stream_write_flush,
     def_params(
         zero_strm_write_t *ptStreamWrite;
-        mem_blk_t **pptByteFifo;
-        void (*fnDmaStart)(mem_blk_t *ptFifoSend); 
+        zero_strm_mem_blk_t **pptByteFifo;
+        void (*fnDmaStart)(zero_strm_mem_blk_t *ptFifoSend); 
         stream_write_flush_fn  *fnFlush ;
     )
 )
@@ -49,7 +49,7 @@ fsm_initialiser(enqueue,
     )
 
 fsm_initialiser(stream_write_flush,
-    args(zero_strm_write_t *ptStreamWrite,mem_blk_t **pptByteFifo,dma_start_fn *fnDmaStart
+    args(zero_strm_write_t *ptStreamWrite,zero_strm_mem_blk_t **pptByteFifo,zero_strm_dma_send_data_fn *fnDmaStart
     ))
     
     init_body (  
@@ -96,7 +96,7 @@ implement_fsm(enqueue,
             }                
         } 
         state(GET_BYTE_FIFO) {             
-            mem_blk_t *ptByteFifo = zero_strm_block_new(&this.ptStreamWrite->tMemBlockFifo);                       
+            zero_strm_mem_blk_t *ptByteFifo = zero_strm_block_new(&this.ptStreamWrite->tMemBlockFifo);                       
             if (NULL != ptByteFifo) {
                 zero_strm_init_byte_fifo_empty(&(this.ptStreamWrite->tByteFifo),ptByteFifo->chMemory,ptByteFifo->tSizeInByte); 
                 ptByteFifo->tSizeInByte = 0;

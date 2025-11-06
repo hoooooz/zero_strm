@@ -20,7 +20,7 @@
 #undef  this
 #define this    (*ptThis)
 
-bool zero_strm_init_byte_fifo_empty(byte_fifo_t *ptThis,byte *ptBuff,uint16_t hwSize)
+bool zero_strm_init_byte_fifo_empty(zero_strm_byte_fifo_t *ptThis,byte *ptBuff,uint16_t hwSize)
 {
     bool bRet = false;
     
@@ -40,7 +40,7 @@ bool zero_strm_init_byte_fifo_empty(byte_fifo_t *ptThis,byte *ptBuff,uint16_t hw
     return bRet;
 }
 
-bool zero_strm_init_byte_fifo_full(byte_fifo_t *ptThis,byte *ptBuff,uint16_t hwSize)
+bool zero_strm_init_byte_fifo_full(zero_strm_byte_fifo_t *ptThis,byte *ptBuff,uint16_t hwSize)
 {
     bool bRet = false;
     
@@ -64,7 +64,7 @@ bool zero_strm_init_byte_fifo_full(byte_fifo_t *ptThis,byte *ptBuff,uint16_t hwS
 
 
 
-bool zero_strm_enqueue_byte_fifo(byte_fifo_t *ptThis,byte tByteToIn)
+bool zero_strm_enqueue_byte_fifo(zero_strm_byte_fifo_t *ptThis,byte tByteToIn)
 {
     bool bRet = false;
     
@@ -87,7 +87,7 @@ bool zero_strm_enqueue_byte_fifo(byte_fifo_t *ptThis,byte tByteToIn)
     return bRet;
 }
 
-bool zero_strm_dequeue_byte_fifo(byte_fifo_t *ptThis,byte *ptToOut)
+bool zero_strm_dequeue_byte_fifo(zero_strm_byte_fifo_t *ptThis,byte *ptToOut)
 {
     bool bRet = false;
     
@@ -111,7 +111,7 @@ bool zero_strm_dequeue_byte_fifo(byte_fifo_t *ptThis,byte *ptToOut)
     return bRet;
 }
 
-bool zero_strm_is_byte_fifo_empty(byte_fifo_t *ptThis)
+bool zero_strm_is_byte_fifo_empty(zero_strm_byte_fifo_t *ptThis)
 {
     bool bRet = false;
     

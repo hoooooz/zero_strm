@@ -25,9 +25,9 @@
 def_simple_fsm(stream_read_flush,
     def_params(           
         zero_strm_read_t  *ptStreamRead;
-        mem_blk_t **pptByteFifo;
-        mem_blk_t *ptByteFifo;
-        dma_start_rx_fn *fnDmaStartRx;
+        zero_strm_mem_blk_t **pptByteFifo;
+        zero_strm_mem_blk_t *ptByteFifo;
+        zero_strm_dma_start_rx_fn *fnDmaStartRx;
         stream_read_flush_fn *fnFlush; 
     )
 )
@@ -35,7 +35,7 @@ def_simple_fsm(stream_read_flush,
 def_simple_fsm(dequeue,
     def_params(
         zero_strm_read_t *ptStreamRead;
-        mem_blk_t *ptByteFifo;
+        zero_strm_mem_blk_t *ptByteFifo;
         dequeue_fn *fnDequeue;
     )
 )
@@ -89,7 +89,7 @@ fsm_initialiser(dequeue,
     )
 
 fsm_initialiser(stream_read_flush,
-    args(zero_strm_read_t *ptStreamRead ,mem_blk_t **pptByteFifo,dma_start_rx_fn *fnDmaStartRx
+    args(zero_strm_read_t *ptStreamRead ,zero_strm_mem_blk_t **pptByteFifo,zero_strm_dma_start_rx_fn *fnDmaStartRx
     ))
 
     init_body(  
@@ -141,7 +141,7 @@ implement_fsm(dequeue,
              }
         }
         state(GET_BYTE_FIFO) {             
-             mem_blk_t *ptByteFifo = zero_strm_block_fetch(&(this.ptStreamRead->tMemBlockFifo));   
+             zero_strm_mem_blk_t *ptByteFifo = zero_strm_block_fetch(&(this.ptStreamRead->tMemBlockFifo));   
              if (NULL == ptByteFifo) {
                  
              } else {

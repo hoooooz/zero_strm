@@ -22,8 +22,8 @@
 #include "..\zero_strm_cfg.h"
 
 typedef union {
-    mem_blk_t tList;
-    uint8_t buffer[sizeof(mem_blk_t) + WRITE_BUFF_CNT];
+    zero_strm_mem_blk_t tList;
+    uint8_t buffer[sizeof(zero_strm_mem_blk_t) + WRITE_BUFF_CNT];
 } write_fifo_t;
 
 
@@ -44,8 +44,8 @@ extern_fsm_implementation(stream_write_flush);
 extern_simple_fsm(stream_write_flush,
     def_params(
         zero_strm_write_t *ptStreamWrite;
-        mem_blk_t **pptByteFifo;
-        void (*fnDmaStart)(mem_blk_t *ptFifoSend); 
+        zero_strm_mem_blk_t **pptByteFifo;
+        void (*fnDmaStart)(zero_strm_mem_blk_t *ptFifoSend); 
         stream_write_flush_fn  *fnFlush ;
     )
 )
@@ -62,12 +62,12 @@ extern_simple_fsm(enqueue,
 
 struct zero_strm_write_t {
     bool bBusy ;
-    mem_blk_t *ptFifoSend ;
-    mem_blk_t *ptByteFifo ;
-    mem_blk_t *ptByteFifoCpl ;
-    mem_blk_fifo_t tMemBlockFifo ;
-    void (*fnDmaStart)(mem_blk_t *ptFifoSend) ;
-    byte_fifo_t tByteFifo ; 
+    zero_strm_mem_blk_t *ptFifoSend ;
+    zero_strm_mem_blk_t *ptByteFifo ;
+    zero_strm_mem_blk_t *ptByteFifoCpl ;
+    zero_strm_mem_blk_fifo_t tMemBlockFifo ;
+    zero_strm_dma_send_data_fn *fnDmaStart;
+    zero_strm_byte_fifo_t tByteFifo ; 
     fsm(enqueue) fsmEnqueue ;
     fsm(stream_write_flush) fsmFlushAuto ;
     fsm(stream_write_flush) fsmFlushManual ;
