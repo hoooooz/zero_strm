@@ -27,25 +27,28 @@
 
 zero_strm_read_t g_tZStrmRead;
 zero_strm_write_t g_tZStrmWrite;
+uint32_t wRxCnt =0;
+uint32_t wTxCnt =0;
 /*============================ PROTOTYPES ====================================*/
 
-extern void uart1_DmaSendData(void);
+//extern void uart1_DmaSendData(void);
 static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis);
 static void uart_dma_data_send(zero_strm_mem_blk_t *ptThis);
 static uint16_t get_dma_cnt(void) ;
-static void time_trigger(uint32_t wTimeOut);
+//static void time_trigger(uint32_t wTimeOut);
 /*============================ LOCAL VARIABLES ===============================*/
 
 __attribute__((aligned(32)))
-static uint8_t s_chReadBuffer[1024];
+static uint8_t s_chReadBuffer[1024*5];
+
 __attribute__((aligned(32)))
-static uint8_t s_chWriteBuffer[1024];
+static uint8_t s_chWriteBuffer[1024*5];
 
 
 static zero_strm_read_cfg_t s_tZStrmReadCfg = {
     .pchBuffer     = s_chReadBuffer,
     .hwSize        = sizeof(s_chReadBuffer),
-    .wTimeOutMs    = 2000,
+    .wTimeOutMs    = 4000,
     .fnDmaStartRx  = uart_dma_data_get,
     .fnDmaCntGet   = get_dma_cnt,
 };
@@ -53,7 +56,7 @@ static zero_strm_read_cfg_t s_tZStrmReadCfg = {
 static zero_strm_write_cfg_t s_tZStrmWriteCfg = {
     .pchBuffer     = s_chWriteBuffer,
     .hwSize        = sizeof(s_chWriteBuffer),
-    .fnDmaSendData = uart_dma_data_send    
+    .fnDmaSendData = uart_dma_data_send,
 };
 
 
@@ -65,7 +68,7 @@ static zero_strm_write_cfg_t s_tZStrmWriteCfg = {
 int main(void)
 {
     bsp_init();
-
+    
 #if __USE_EVENT_RECORDER__    
     EventRecorderInitialize(0, 1);
 #endif
@@ -76,10 +79,15 @@ int main(void)
   
     while(1) {
         uint8_t chByte;
-        
+        //__cycleof__ ("main loop") {
         if ( zero_strm_read(&g_tZStrmRead,&chByte) ) {
-            printf("%c",chByte); 
-        }
+            printf("%c",chByte);  
+        //zero_strm_write(&g_tZStrmWrite,chByte);
+        } 
+        
+//        if (perfc_is_time_out_ms1(100)) {
+//            printf("t%d\r\n",(uint32_t)get_system_ms());
+//        }
     }
 }
 
@@ -102,23 +110,21 @@ void DMA1_Channel4_IRQHandler(void)
     if ( RESET != DMA_GetITStatus(DMA1_IT_TC4) ) {
         DMA_Cmd(DMA1_Channel4,DISABLE);
         DMA_ClearITPendingBit(DMA1_IT_TC4);
- 
+ wTxCnt ++;
         zero_strm_dma_send_data_cpl_event_handler(&g_tZStrmWrite);
     }
 #endif
 }
 
-static uint16_t get_dma_cnt(void) 
-{   
-    return DMA_GetCurrDataCounter(DMA1_Channel5);
-}
+
 
 void DMA1_Channel5_IRQHandler(void)
 {
    
     if ( RESET != DMA_GetITStatus(DMA1_IT_HT5) ) {       
         DMA_ClearITPendingBit(DMA1_IT_HT5);
-        zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead);
+ wRxCnt++ ;
+        zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead);       
     }
    
     if ( RESET != DMA_GetITStatus(DMA1_IT_TC5) ) {
@@ -128,48 +134,14 @@ void DMA1_Channel5_IRQHandler(void)
 
 void USART1_IRQHandler(void)
 {
-    
-
     if ( RESET != USART_GetITStatus(USART1,USART_IT_IDLE) ) {
         uint32_t temp = USART1->SR;  
         temp = USART1->DR;
         (void)temp;
-
+        
         zero_strm_uart_idle_insert_to_uart_irq_event_handler(&g_tZStrmRead);
     }
 }
-
-
-static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis)
-{
-    if ( NULL == ptThis ) {
-        return ;
-    }
-
-    DMA_Cmd(DMA1_Channel5,DISABLE);
-    DMA1_Channel5->CMAR = (uint32_t)(this.chMemory);
-    DMA1_Channel5->CNDTR = this.tSizeInByte;   
-    DMA_Cmd(DMA1_Channel5,ENABLE);
-}
-
-static void uart_dma_data_send(zero_strm_mem_blk_t *ptThis)
-{
-    if ( NULL == ptThis ) {
-        return ;
-    }
-    
-    DMA_Cmd(DMA1_Channel4,DISABLE);
-    DMA1_Channel4->CMAR  = (uint32_t)(this.chMemory);
-    DMA1_Channel4->CNDTR = this.tSizeInByte;   
-    DMA_Cmd(DMA1_Channel4,ENABLE);
-
-}
-
-static void time_trigger(uint32_t wTimeOut)
-{
-    bsp_StartHardTimer(1, wTimeOut, NULL);
-}
-
 
 void TIM5_IRQHandler(void)
 {
@@ -183,15 +155,46 @@ void TIM5_IRQHandler(void)
         zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead) ;
     }
     
-    itstatus = timesr & TIM_IT_CC1;
-    itenable = TIMx->DIER & TIM_IT_CC1;
-    
-    if ((itstatus != (uint16_t)RESET) && (itenable != (uint16_t)RESET)) {    
-        TIMx->SR = (uint16_t)~TIM_IT_CC1;
-        TIMx->DIER &= (uint16_t)~TIM_IT_CC1;    /* disable CC1 interupt */
+//    itstatus = timesr & TIM_IT_CC1;
+//    itenable = TIMx->DIER & TIM_IT_CC1;
+//    
+//    if ((itstatus != (uint16_t)RESET) && (itenable != (uint16_t)RESET)) {    
+//        TIMx->SR = (uint16_t)~TIM_IT_CC1;
+//        TIMx->DIER &= (uint16_t)~TIM_IT_CC1;    /* disable CC1 interrupt */
 
-    }
-
+//    }
 }
 
+static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis)
+{
+    if ( NULL == ptThis ) {
+        return ;
+    }
+
+    DMA_Cmd(DMA1_Channel5,DISABLE);
+    
+    DMA1_Channel5->CMAR = (uint32_t)(this.chMemory);
+    DMA1_Channel5->CNDTR = this.tSizeInByte;  
+    
+    DMA_Cmd(DMA1_Channel5,ENABLE);
+}
+
+static void uart_dma_data_send(zero_strm_mem_blk_t *ptThis)
+{
+    if ( NULL == ptThis ) {
+        return ;
+    }
+    
+    DMA_Cmd(DMA1_Channel4,DISABLE);
+    
+    DMA1_Channel4->CMAR  = (uint32_t)(this.chMemory);
+    DMA1_Channel4->CNDTR = this.tSizeInByte;  
+   
+    DMA_Cmd(DMA1_Channel4,ENABLE);
+}
+
+static uint16_t get_dma_cnt(void) 
+{   
+    return DMA_GetCurrDataCounter(DMA1_Channel5);
+}
 

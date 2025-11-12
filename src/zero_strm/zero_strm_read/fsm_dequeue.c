@@ -202,8 +202,8 @@ implement_fsm(stream_read_flush)
             } else {
                 update_data_cnt(this.ptStreamRead,hwDataCnt);                 
                 zero_strm_block_append(&this.ptStreamRead->tMemBlockFifo,*this.pptByteFifo);
-                if (NULL != this.ptByteFifo) {
-                    (*this.ptStreamRead->fnDmaStartRx)(this.ptByteFifo);
+                if (NULL != this.ptByteFifo) {                   
+                    (*this.ptStreamRead->fnDmaStartRx)(this.ptByteFifo);                    
                     this.ptStreamRead->ptByteFifoDmaRx = this.ptByteFifo;
                    
                 }
@@ -224,7 +224,7 @@ implement_fsm(time_out)
     body(    
         on_start(  
             update_state_to(IS_REALLY_TIME_OUT);       
-        )     
+        )
         state(IS_REALLY_TIME_OUT) { 
             if (is_really_time_out(this.ptStreamRead)) {   
                 update_state_to(FLUSH);  
@@ -232,7 +232,6 @@ implement_fsm(time_out)
                 reset_fsm();
             }
         }
-
 
         state(FLUSH) {
             if (fsm_rt_cpl == call_fsm(stream_read_flush,&this.ptStreamRead->fsmTimeOut)) {
@@ -289,6 +288,7 @@ static bool is_really_time_out(zero_strm_read_t *ptThis)
     if (false == is_timer_time_out(&this)) {
         return false;
     }
+    
     if (false == is_uart_idle(&this)) {
         return false;
     }

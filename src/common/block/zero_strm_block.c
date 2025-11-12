@@ -16,7 +16,7 @@
 ****************************************************************************/
 #include "zero_strm_block.h"
 
-
+#include "perf_counter.h"
 #undef  this
 #define this    (*ptThis)
 
@@ -38,9 +38,10 @@ void zero_strm_block_free(zero_strm_mem_blk_fifo_t *ptThis,zero_strm_mem_blk_t *
     if ( NULL == ptFreeBlock ) {
         return ;
     }
-   
+
     ptFreeBlock->ptNext = this.ptFreeList; 
     this.ptFreeList = ptFreeBlock; 
+   
 }
 
 zero_strm_mem_blk_t *zero_strm_block_new(zero_strm_mem_blk_fifo_t *ptThis) 
@@ -52,9 +53,9 @@ zero_strm_mem_blk_t *zero_strm_block_new(zero_strm_mem_blk_fifo_t *ptThis)
     if ( NULL == ptTemp ) {
         return NULL;
     }
-    
+
     this.ptFreeList = this.ptFreeList->ptNext ; 
-    
+   
     return ptTemp;
 }
 
@@ -66,6 +67,7 @@ bool zero_strm_block_append(zero_strm_mem_blk_fifo_t *ptThis,zero_strm_mem_blk_t
     if ( NULL == ptThis ) {
         return false;
     }
+
     ptNewNode->ptNext = NULL;
     /*   fifo empty   */
     if ( NULL == this.FIFO.ptTail ) {        
@@ -77,7 +79,7 @@ bool zero_strm_block_append(zero_strm_mem_blk_fifo_t *ptThis,zero_strm_mem_blk_t
         /* update  node */
         this.FIFO.ptTail = ptNewNode;  
     } 
-   
+  
     return true;
 }
 
@@ -90,7 +92,7 @@ zero_strm_mem_blk_t *zero_strm_block_fetch(zero_strm_mem_blk_fifo_t *ptThis)
     if ( NULL == ptTemp ) {
         return NULL;
     }
-    
+ 
     /* the last one block */
     if ( this.FIFO.ptHead == this.FIFO.ptTail ) {
         this.FIFO.ptTail = NULL;

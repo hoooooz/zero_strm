@@ -582,9 +582,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>App</GroupName>
-        </Group>
-        <Group>
           <GroupName>zero_strm_block</GroupName>
           <Files>
             <File>

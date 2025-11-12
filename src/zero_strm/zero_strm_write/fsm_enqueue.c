@@ -129,14 +129,15 @@ implement_fsm(stream_write_flush)
                 update_state_to(GET_BLOCK);           
             } else {
                 fsm_cpl();
-            }                    
-        }         
-        state(GET_BLOCK) {                            
+            }
+        }
+        state(GET_BLOCK) {
             this.ptStreamWrite->ptFifoSend = zero_strm_block_fetch(&this.ptStreamWrite->tMemBlockFifo);           
             if (NULL == this.ptStreamWrite->ptFifoSend ) {  
                 this.ptStreamWrite->bBusy = false;
                 fsm_cpl();
-            } else {                            
+            } else {   
+
                 (*this.fnDmaStart)(this.ptStreamWrite->ptFifoSend); 
                 fsm_cpl();               
             }        

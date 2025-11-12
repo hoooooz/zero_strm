@@ -15,7 +15,7 @@
 *                                                                           *
 ****************************************************************************/
 #include "zero_strm_byte_fifo.h"
-
+#include "perf_counter.h"
 
 #undef  this
 #define this    (*ptThis)
@@ -29,7 +29,7 @@ bool zero_strm_init_byte_fifo_empty(zero_strm_byte_fifo_t *ptThis,byte *ptBuff,u
        ||   (0 == hwSize)) {
         return bRet;
     }
-       
+      
     this.pchBuffer = ptBuff;
     this.hwSize    = hwSize;
     this.hwHead    = 0;
@@ -37,6 +37,7 @@ bool zero_strm_init_byte_fifo_empty(zero_strm_byte_fifo_t *ptThis,byte *ptBuff,u
     this.hwLength  = 0;
     
     bRet = true;
+    
     return bRet;
 }
 
@@ -49,7 +50,7 @@ bool zero_strm_init_byte_fifo_full(zero_strm_byte_fifo_t *ptThis,byte *ptBuff,ui
        ||   (0 == hwSize)) {
         return bRet;
     }
-         
+      
     this.pchBuffer = ptBuff;
     this.hwSize    = hwSize;
     this.hwHead    = 0;
@@ -76,7 +77,7 @@ bool zero_strm_enqueue_byte_fifo(zero_strm_byte_fifo_t *ptThis,byte tByteToIn)
        &&   (0 != this.hwLength)) {
         return  bRet; 
     }
-    
+  
     this.pchBuffer[this.hwTail++] = tByteToIn;
     
     if (this.hwTail >= this.hwSize) {
@@ -84,6 +85,7 @@ bool zero_strm_enqueue_byte_fifo(zero_strm_byte_fifo_t *ptThis,byte tByteToIn)
     }
     this.hwLength++;
     bRet = true;
+  
     return bRet;
 }
 
@@ -100,7 +102,7 @@ bool zero_strm_dequeue_byte_fifo(zero_strm_byte_fifo_t *ptThis,byte *ptToOut)
        &&   (0 == this.hwLength)) {
         return bRet;   
     }
-    
+   
     *ptToOut = this.pchBuffer[this.hwHead++];
     
     if (this.hwHead >= this.hwSize) {
@@ -108,6 +110,7 @@ bool zero_strm_dequeue_byte_fifo(zero_strm_byte_fifo_t *ptThis,byte *ptToOut)
     }
     this.hwLength--;
     bRet = true;
+
     return bRet;
 }
 
@@ -118,11 +121,12 @@ bool zero_strm_is_byte_fifo_empty(zero_strm_byte_fifo_t *ptThis)
     if (NULL == ptThis) {
         return bRet;
     }
-    
+  
     if (    (this.hwHead == this.hwTail) 
        &&   (0 == this.hwLength)) {
         bRet  = true;   
     }
+
     return bRet;
 }
 
