@@ -686,6 +686,9 @@
           <GroupName>::CMSIS-View</GroupName>
         </Group>
         <Group>
+          <GroupName>::Generic</GroupName>
+        </Group>
+        <Group>
           <GroupName>::Language Extension</GroupName>
         </Group>
         <Group>
@@ -741,6 +744,12 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </component>
+      <component Cclass="Generic" Cgroup="zero_strm" Cvendor="Hooz" Cversion="1.0.0">
+        <package name="zero_strm" schemaVersion="1.7.37" url="https://github.com/hoooooz/zero_strm" vendor="Hooz" version="1.0.0"/>
+        <targetInfos>
+          <targetInfo name="Target 1"/>
+        </targetInfos>
+      </component>
     </components>
     <files>
       <file attr="config" category="header" name="EventRecorder\Config\EventRecorderConf.h" version="1.1.0">
@@ -752,10 +761,12 @@
         </targetInfos>
       </file>
       <file attr="config" category="header" name="src\zero_strm\zero_strm_cfg.h" version="1.0.0">
-        <instance index="0" removed="1">RTE\Generic\zero_strm_cfg.h</instance>
+        <instance index="0">RTE\Generic\zero_strm_cfg.h</instance>
         <component Cclass="Generic" Cgroup="zero_strm" Cvendor="Hooz" Cversion="1.0.0"/>
         <package name="zero_strm" schemaVersion="1.7.37" url="https://github.com/hoooooz/zero_strm" vendor="Hooz" version="1.0.0"/>
-        <targetInfos/>
+        <targetInfos>
+          <targetInfo name="Target 1"/>
+        </targetInfos>
       </file>
       <file attr="config" category="sourceC" name="example\ymodem\ymodem_receive.c" version="0.9.6">
         <instance index="0" removed="1">RTE\MicroBoot\ymodem_receive.c</instance>
