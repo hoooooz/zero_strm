@@ -202,18 +202,14 @@ implement_fsm(stream_read_flush)
             } else {
                 update_data_cnt(this.ptStreamRead,hwDataCnt);                 
                 zero_strm_block_append(&this.ptStreamRead->tMemBlockFifo,*this.pptByteFifo);
-                if (NULL != this.ptByteFifo) {                   
-                    (*this.ptStreamRead->fnDmaStartRx)(this.ptByteFifo);                    
+                if (NULL != this.ptByteFifo) {
+                    (*this.ptStreamRead->fnDmaStartRx)(this.ptByteFifo);  
                     this.ptStreamRead->ptByteFifoDmaRx = this.ptByteFifo;
-                   
                 }
                 fsm_cpl();
             }
-
         }
-        
-
-    ) 
+    )
     
 }
 

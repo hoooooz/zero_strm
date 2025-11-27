@@ -85,6 +85,7 @@ extern
 bool zero_strm_write(zero_strm_write_t *ptThis,byte tByte) ;
 extern
 void zero_strm_dma_send_data_cpl_event_handler(zero_strm_write_t *ptThis) ;
-
+extern
+void zero_strm_write_rest_of_data(zero_strm_write_t *ptThis);
 #endif
 

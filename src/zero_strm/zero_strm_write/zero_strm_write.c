@@ -84,6 +84,14 @@ bool zero_strm_write(zero_strm_write_t *ptThis,byte tByte)
     return bRet;
 }
 
+void zero_strm_write_rest_of_data(zero_strm_write_t *ptThis)
+{
+    if ( NULL == ptThis ) {
+        return ;
+    }
+    
+    call_fsm(stream_write_flush,&(this.fsmFlushManual));
+}
 void zero_strm_dma_send_data_cpl_event_handler(zero_strm_write_t *ptThis)
 {
     if (NULL == ptThis) {

@@ -89,8 +89,7 @@
 
 
                 <file category="header"            name="src/common/utilities/ooc.h" />
-                <file category="header"            name="src/common/utilities/simple_fsm.h" />
-                <file category="header"            name="src/common/utilities/3rd-party/PLOOC/plooc_class_simple.h" />
+
               </files>
 
 

@@ -19,16 +19,18 @@
 
 /*============================ MACROS ========================================*/
 #undef   this
-#define  this   (*ptThis) 
- 
+#define  this   (*ptThis)
+#define  __MY_DEBGU   0
 /*============================ MACROFIED FUNCTIONS ===========================*/
 /*============================ TYPES =========================================*/
 /*============================ GLOBAL VARIABLES ==============================*/
 
-zero_strm_read_t g_tZStrmRead;
+zero_strm_read_t  g_tZStrmRead;
 zero_strm_write_t g_tZStrmWrite;
-uint32_t wRxCnt =0;
-uint32_t wTxCnt =0;
+uint32_t wRxCnt = 0;
+uint32_t wTxCnt = 0;
+uint8_t chFlag = 0 ;
+uint32_t wTimeStamp;
 /*============================ PROTOTYPES ====================================*/
 
 //extern void uart1_DmaSendData(void);
@@ -76,18 +78,38 @@ int main(void)
 
     zero_strm_read_init(&g_tZStrmRead,&s_tZStrmReadCfg);
     zero_strm_write_init(&g_tZStrmWrite,&s_tZStrmWriteCfg);
-  
+
     while(1) {
         uint8_t chByte;
-        //__cycleof__ ("main loop") {
-        if ( zero_strm_read(&g_tZStrmRead,&chByte) ) {
-            printf("%c",chByte);  
-        //zero_strm_write(&g_tZStrmWrite,chByte);
-        } 
+       //if (perfc_is_time_out_ms1(1000)) {
         
-//        if (perfc_is_time_out_ms1(100)) {
-//            printf("t%d\r\n",(uint32_t)get_system_ms());
-//        }
+        if ( zero_strm_read(&g_tZStrmRead,&chByte) ) {
+            
+            zero_strm_write(&g_tZStrmWrite,chByte);
+            //printf("%c",chByte);  
+        } 
+    
+  
+        else {
+                    if (perfc_is_time_out_ms1(10)) {
+            if (chFlag==1  ) {
+                wTimeStamp = get_system_ms();
+                wTimeStamp = wTimeStamp+100;
+                chFlag = 2;
+            }
+            //printf("hello\r\n"); 
+            if (chFlag == 2) {
+                if (get_system_ms() > wTimeStamp) {
+                    zero_strm_write_rest_of_data(&g_tZStrmWrite);
+                    chFlag = 0;
+                }                
+            }
+        }
+        }
+        
+
+        
+
     }
 }
 
@@ -110,21 +132,23 @@ void DMA1_Channel4_IRQHandler(void)
     if ( RESET != DMA_GetITStatus(DMA1_IT_TC4) ) {
         DMA_Cmd(DMA1_Channel4,DISABLE);
         DMA_ClearITPendingBit(DMA1_IT_TC4);
- wTxCnt ++;
+#if __MY_DEBGU == 1
+        wTxCnt ++;
+#endif
         zero_strm_dma_send_data_cpl_event_handler(&g_tZStrmWrite);
     }
 #endif
 }
 
-
-
 void DMA1_Channel5_IRQHandler(void)
-{
-   
-    if ( RESET != DMA_GetITStatus(DMA1_IT_HT5) ) {       
+{   
+    if ( RESET != DMA_GetITStatus(DMA1_IT_HT5) ) {
         DMA_ClearITPendingBit(DMA1_IT_HT5);
- wRxCnt++ ;
-        zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead);       
+#if __MY_DEBGU == 1
+        wRxCnt++ ;
+#endif
+
+        zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead); 
     }
    
     if ( RESET != DMA_GetITStatus(DMA1_IT_TC5) ) {
@@ -152,17 +176,12 @@ void TIM5_IRQHandler(void)
     timesr = TIMx->SR;
     if (timesr & TIM_IT_Update) {
         TIMx->SR = (uint16_t)~TIM_IT_Update;
-        zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead) ;
+        if ( zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead) ) {
+            chFlag = 1;
+        }
     }
     
-//    itstatus = timesr & TIM_IT_CC1;
-//    itenable = TIMx->DIER & TIM_IT_CC1;
-//    
-//    if ((itstatus != (uint16_t)RESET) && (itenable != (uint16_t)RESET)) {    
-//        TIMx->SR = (uint16_t)~TIM_IT_CC1;
-//        TIMx->DIER &= (uint16_t)~TIM_IT_CC1;    /* disable CC1 interrupt */
 
-//    }
 }
 
 static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis)
@@ -173,7 +192,7 @@ static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis)
 
     DMA_Cmd(DMA1_Channel5,DISABLE);
     
-    DMA1_Channel5->CMAR = (uint32_t)(this.chMemory);
+    DMA1_Channel5->CMAR  = (uint32_t)(this.chMemory);
     DMA1_Channel5->CNDTR = this.tSizeInByte;  
     
     DMA_Cmd(DMA1_Channel5,ENABLE);

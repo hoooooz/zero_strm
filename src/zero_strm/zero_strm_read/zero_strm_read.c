@@ -116,14 +116,18 @@ void zero_strm_uart_idle_insert_to_uart_irq_event_handler(zero_strm_read_t *ptTh
     
 }
 
-void zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(zero_strm_read_t *ptThis) 
-{
+bool zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(zero_strm_read_t *ptThis) 
+{ 
+    bool bRet = false;
     if ( NULL == ptThis ) {
-        return;
+        return false;
     }
    
-    call_fsm(time_out,&(this.fsmTimeOut)); 
-
+   if (fsm_rt_cpl == call_fsm(time_out,&(this.fsmTimeOut)) ) {
+       bRet = true;
+   }
+   
+   return bRet;
 }
 
 

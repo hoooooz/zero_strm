@@ -52,9 +52,7 @@ DEFAULT_ARGS=(-c "v")
    zero_strm_byte_fifo.c
    zero_strm_byte_fifo.h
    common.h
-   ooc.h
-   simple_fsm.h
-   plooc_class_simple.h
+   ooc.h   
    README.md
  "
 
