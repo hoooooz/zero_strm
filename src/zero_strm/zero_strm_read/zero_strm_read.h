@@ -101,6 +101,6 @@ void zero_strm_uart_idle_insert_to_uart_irq_event_handler(zero_strm_read_t  *ptT
 extern
 bool zero_strm_read(zero_strm_read_t *ptThis,byte *pchChar) ;
 extern
-bool zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(zero_strm_read_t *ptThis) ;
+void zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(zero_strm_read_t *ptThis) ;
 #endif
 

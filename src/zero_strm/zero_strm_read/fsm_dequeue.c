@@ -192,6 +192,7 @@ implement_fsm(stream_read_flush)
         }         
         
         state(GET_DATA_CNT) {
+           
             uint16_t hwDataCnt = get_dma_data_cnt(this.ptStreamRead);
             if (0 == hwDataCnt) {                
                 if (NULL != this.ptByteFifo) {
@@ -203,7 +204,7 @@ implement_fsm(stream_read_flush)
                 update_data_cnt(this.ptStreamRead,hwDataCnt);                 
                 zero_strm_block_append(&this.ptStreamRead->tMemBlockFifo,*this.pptByteFifo);
                 if (NULL != this.ptByteFifo) {
-                    (*this.ptStreamRead->fnDmaStartRx)(this.ptByteFifo);  
+                    (*this.ptStreamRead->fnDmaStartRx)(this.ptByteFifo); 
                     this.ptStreamRead->ptByteFifoDmaRx = this.ptByteFifo;
                 }
                 fsm_cpl();

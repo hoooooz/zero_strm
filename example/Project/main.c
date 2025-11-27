@@ -27,17 +27,14 @@
 
 zero_strm_read_t  g_tZStrmRead;
 zero_strm_write_t g_tZStrmWrite;
-uint32_t wRxCnt = 0;
-uint32_t wTxCnt = 0;
-uint8_t chFlag = 0 ;
-uint32_t wTimeStamp;
+
 /*============================ PROTOTYPES ====================================*/
 
-//extern void uart1_DmaSendData(void);
+
 static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis);
 static void uart_dma_data_send(zero_strm_mem_blk_t *ptThis);
 static uint16_t get_dma_cnt(void) ;
-//static void time_trigger(uint32_t wTimeOut);
+
 /*============================ LOCAL VARIABLES ===============================*/
 
 __attribute__((aligned(32)))
@@ -81,34 +78,13 @@ int main(void)
 
     while(1) {
         uint8_t chByte;
-       //if (perfc_is_time_out_ms1(1000)) {
+       
         
         if ( zero_strm_read(&g_tZStrmRead,&chByte) ) {
             
             zero_strm_write(&g_tZStrmWrite,chByte);
-            //printf("%c",chByte);  
+             
         } 
-    
-  
-        else {
-                    if (perfc_is_time_out_ms1(10)) {
-            if (chFlag==1  ) {
-                wTimeStamp = get_system_ms();
-                wTimeStamp = wTimeStamp+100;
-                chFlag = 2;
-            }
-            //printf("hello\r\n"); 
-            if (chFlag == 2) {
-                if (get_system_ms() > wTimeStamp) {
-                    zero_strm_write_rest_of_data(&g_tZStrmWrite);
-                    chFlag = 0;
-                }                
-            }
-        }
-        }
-        
-
-        
 
     }
 }
@@ -132,9 +108,7 @@ void DMA1_Channel4_IRQHandler(void)
     if ( RESET != DMA_GetITStatus(DMA1_IT_TC4) ) {
         DMA_Cmd(DMA1_Channel4,DISABLE);
         DMA_ClearITPendingBit(DMA1_IT_TC4);
-#if __MY_DEBGU == 1
-        wTxCnt ++;
-#endif
+
         zero_strm_dma_send_data_cpl_event_handler(&g_tZStrmWrite);
     }
 #endif
@@ -144,9 +118,7 @@ void DMA1_Channel5_IRQHandler(void)
 {   
     if ( RESET != DMA_GetITStatus(DMA1_IT_HT5) ) {
         DMA_ClearITPendingBit(DMA1_IT_HT5);
-#if __MY_DEBGU == 1
-        wRxCnt++ ;
-#endif
+
 
         zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead); 
     }
@@ -176,12 +148,9 @@ void TIM5_IRQHandler(void)
     timesr = TIMx->SR;
     if (timesr & TIM_IT_Update) {
         TIMx->SR = (uint16_t)~TIM_IT_Update;
-        if ( zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead) ) {
-            chFlag = 1;
-        }
+        zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(&g_tZStrmRead);
     }
     
-
 }
 
 static void uart_dma_data_get(zero_strm_mem_blk_t *ptThis)
