@@ -119,7 +119,6 @@ void DMA1_Channel5_IRQHandler(void)
     if ( RESET != DMA_GetITStatus(DMA1_IT_HT5) ) {
         DMA_ClearITPendingBit(DMA1_IT_HT5);
 
-
         zero_strm_uart_dma_get_data_insert_to_dma_irq_event_handler(&g_tZStrmRead); 
     }
    

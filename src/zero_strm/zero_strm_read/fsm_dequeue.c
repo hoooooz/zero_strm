@@ -133,7 +133,6 @@ implement_fsm(dequeue,
         )
         state(BYTE_FIFO_OUT) {
              if (zero_strm_dequeue_byte_fifo(&(this.ptStreamRead->tByteFifo),ptByte) ) {  
-                
                 fsm_cpl();
              } else {
                 zero_strm_block_free(&this.ptStreamRead->tMemBlockFifo,this.ptByteFifo);
@@ -223,7 +222,9 @@ implement_fsm(time_out)
             update_state_to(IS_REALLY_TIME_OUT);       
         )
         state(IS_REALLY_TIME_OUT) { 
-            if (is_really_time_out(this.ptStreamRead)) {   
+            if (is_really_time_out(this.ptStreamRead)) {
+                init_fsm(stream_read_flush,&this.fsmFlush,
+                    args(this.ptStreamRead,&this.ptStreamRead->ptByteFifoDmaRx,this.ptStreamRead->fnDmaStartRx));
                 update_state_to(FLUSH);  
             } else {
                 reset_fsm();
@@ -231,9 +232,14 @@ implement_fsm(time_out)
         }
 
         state(FLUSH) {
-            if (fsm_rt_cpl == call_fsm(stream_read_flush,&this.ptStreamRead->fsmTimeOut)) {
+            if (fsm_rt_cpl == call_fsm(stream_read_flush,&this.fsmFlush)) {
                 fsm_cpl();
             }
+            
+            
+//            if (fsm_rt_cpl == call_fsm(stream_read_flush,&this.ptStreamRead->fsmTimeOut)) {
+//                fsm_cpl();
+//            }
         }
     )
 }
@@ -402,7 +408,7 @@ static bool is_timer_time_out(zero_strm_read_t *ptThis)
     if ( this.wTimeStamp > 0) {
         this.wTimeStamp--;
     } 
-        
+   
     if (0 == this.wTimeStamp) {
         this.bTimerStart = false;
         bRet = true;
@@ -410,7 +416,4 @@ static bool is_timer_time_out(zero_strm_read_t *ptThis)
     
     return bRet;
 }
-
-
-
 
