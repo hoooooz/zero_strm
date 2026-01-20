@@ -197,7 +197,7 @@ implement_fsm(stream_read_flush)
                 if (NULL != this.ptByteFifo) {
                     zero_strm_block_free(&this.ptStreamRead->tMemBlockFifo,this.ptByteFifo);
                 }
-                set_dma_idle(this.ptStreamRead);
+              
                 fsm_cpl();
             } else {
                 update_data_cnt(this.ptStreamRead,hwDataCnt);                 
@@ -223,6 +223,7 @@ implement_fsm(time_out)
         )
         state(IS_REALLY_TIME_OUT) { 
             if (is_really_time_out(this.ptStreamRead)) {
+                set_dma_idle(&this.ptStreamRead->bBusy);
                 init_fsm(stream_read_flush,&this.fsmFlush,
                     args(this.ptStreamRead,&this.ptStreamRead->ptByteFifoDmaRx,this.ptStreamRead->fnDmaStartRx));
                 update_state_to(FLUSH);  
@@ -232,14 +233,12 @@ implement_fsm(time_out)
         }
 
         state(FLUSH) {
-            if (fsm_rt_cpl == call_fsm(stream_read_flush,&this.fsmFlush)) {
+
+            if (fsm_rt_cpl == call_fsm(stream_read_flush,&this.fsmFlush)) {              
                 fsm_cpl();
             }
             
-            
-//            if (fsm_rt_cpl == call_fsm(stream_read_flush,&this.ptStreamRead->fsmTimeOut)) {
-//                fsm_cpl();
-//            }
+
         }
     )
 }

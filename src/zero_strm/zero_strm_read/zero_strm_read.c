@@ -71,8 +71,6 @@ void zero_strm_read_init(zero_strm_read_t *ptThis,zero_strm_read_cfg_t *ptCfg )
     init_fsm(dequeue,&(this.fsmDequeue),args(&this));
     init_fsm(time_out,&(this.fsmTimeOut),args(&this));
     
-//    init_fsm(stream_read_flush,&this.fsmTimeOut,
-//        args(&this,&this.ptByteFifoDmaRx,this.fnDmaStartRx));
 
 }
 
@@ -109,7 +107,7 @@ void zero_strm_uart_idle_insert_to_uart_irq_event_handler(zero_strm_read_t *ptTh
     if ( NULL == ptThis ) {
         return;
     }
-    
+   
     set_uart_idle(&this);
     record_current_data_count(&this);
     set_target_time(&this);
