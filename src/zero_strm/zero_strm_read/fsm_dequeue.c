@@ -223,7 +223,7 @@ implement_fsm(time_out)
         )
         state(IS_REALLY_TIME_OUT) { 
             if (is_really_time_out(this.ptStreamRead)) {
-                set_dma_idle(&this.ptStreamRead->bBusy);
+                set_dma_idle(this.ptStreamRead);
                 init_fsm(stream_read_flush,&this.fsmFlush,
                     args(this.ptStreamRead,&this.ptStreamRead->ptByteFifoDmaRx,this.ptStreamRead->fnDmaStartRx));
                 update_state_to(FLUSH);  

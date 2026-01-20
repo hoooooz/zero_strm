@@ -122,7 +122,7 @@ void zero_strm_uart_wait_time_out_insert_to_hard_timer_irq_event_handler(zero_st
     }
    
     call_fsm(time_out,&(this.fsmTimeOut)) ;
-
+//set_dma_idle(&this);
    
   
 }
