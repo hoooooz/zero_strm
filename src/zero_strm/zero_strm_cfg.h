@@ -19,8 +19,8 @@
 
 #include "..\common\common.h"
 
-#define   READ_BUFF_CNT     (16)
-#define   WRITE_BUFF_CNT    (4)
+#define   READ_BUFF_CNT     (64*2)
+#define   WRITE_BUFF_CNT    (64)
 
 typedef void(zero_strm_dma_start_rx_fn)(zero_strm_mem_blk_t *ptFifoSend);
 typedef uint16_t(zero_strm_dma_cnt_get_fn)(void);
